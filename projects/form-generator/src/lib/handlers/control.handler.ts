@@ -3,21 +3,10 @@ import { CONTROL, CONTROLS } from "../constant";
 import { ControlConfigModel, ControlModel } from "../models/control.model";
 
 export class ControlHandler {
-    public static setup(config: ControlConfigModel = {}) {
+    public static setup(config: ControlConfigModel = {}): PropertyDecorator {
         return (target: object, propertyKey: string) => {
-            let control: ControlModel = Reflect.getMetadata(CONTROL.replace("{name}", propertyKey), target);
+            let control: ControlModel = this.getControl(target, propertyKey);
             const controlType = Reflect.getMetadata("design:type", target, propertyKey);
-            if (!control) {
-                control = {
-                    name: null,
-                    key: null,
-                    type: null,
-                    validators: []
-                };
-                const controls: ControlModel[] = Reflect.getMetadata(CONTROLS, target) || [];
-                controls.push(control);
-                Reflect.defineMetadata(CONTROLS, controls, target);
-            }
             control = {
                 ...control,
                 name: config.name || propertyKey,
@@ -25,7 +14,28 @@ export class ControlHandler {
                 type: controlType.name,
                 defaultValue: config.defaultValue
             };
-            Reflect.defineMetadata(CONTROL.replace("{name}", propertyKey), control, target);
+            this.saveControl(control, target, propertyKey);
         };
+    }
+
+    public static getControl(target: object, propertyKey: string): ControlModel {
+        let control: ControlModel = Reflect.getMetadata(CONTROL.replace("{name}", propertyKey), target);
+        if (!control) {
+            control = {
+                name: null,
+                key: null,
+                type: null,
+                validators: []
+            };
+            const controls: ControlModel[] = Reflect.getMetadata(CONTROLS, target) || [];
+            controls.push(control);
+            Reflect.defineMetadata(CONTROLS, controls, target);
+        }
+
+        return control;
+    }
+
+    public static saveControl(control: ControlModel, target: object, propertyKey: string) {
+        Reflect.defineMetadata(CONTROL.replace("{name}", propertyKey), control, target);
     }
 }

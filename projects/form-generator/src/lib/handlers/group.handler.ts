@@ -3,7 +3,7 @@ import { CONTROL, CONTROLS } from "../constant";
 import { GroupConfigModel, GroupModel } from "../models/group.model";
 
 export class GroupHandler {
-    public static setup(config: GroupConfigModel = {}) {
+    public static setup(config: GroupConfigModel = {}): PropertyDecorator {
         return (target: object, propertyKey: string) => {
             let group: GroupModel = Reflect.getMetadata(CONTROL.replace("{name}", propertyKey), target);
             const controlType = Reflect.getMetadata("design:type", target, propertyKey);
