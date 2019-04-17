@@ -27,8 +27,8 @@ export class ControlHandler {
                 type: null,
                 validators: []
             };
-            const controls: ControlModel[] = Reflect.getMetadata(CONTROLS, target) || [];
-            controls.push(control);
+            const controls: string[] = Reflect.getMetadata(CONTROLS, target) || [];
+            controls.push(propertyKey);
             Reflect.defineMetadata(CONTROLS, controls, target);
         }
 

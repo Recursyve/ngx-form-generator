@@ -15,8 +15,8 @@ export class GroupHandler {
                     type: null,
                     children
                 };
-                const controls: GroupModel[] = Reflect.getMetadata(CONTROLS, target) || [];
-                controls.push(group);
+                const controls: string[] = Reflect.getMetadata(CONTROLS, target) || [];
+                controls.push(propertyKey);
                 Reflect.defineMetadata(CONTROLS, controls, target);
             }
             group = {
