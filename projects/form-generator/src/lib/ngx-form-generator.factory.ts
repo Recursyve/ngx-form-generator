@@ -1,4 +1,4 @@
-import { GeneratedFormGroup } from "./generated-form-group";
+import { GeneratedFormGroup } from "./forms/generated-form-group";
 import { NgxFormGenerator } from "./ngx-form-generator";
 import { NgxFormGeneratorScanner } from "./ngx-form-generator.scanner";
 

@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
 import { FormGroup } from "@angular/forms";
-import { ControlModel } from "./models/control.model";
-import { GroupModel } from "./models/group.model";
-import { NgxFormGenerator } from "./ngx-form-generator";
+import { ControlModel } from "../models/control.model";
+import { GroupModel } from "../models/group.model";
+import { NgxFormGenerator } from "../ngx-form-generator";
 
 @Injectable()
 export class GeneratedFormGroup<T> extends FormGroup {

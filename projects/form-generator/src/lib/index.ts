@@ -1,1 +1,1 @@
-export * from "./generated-form-group";
+export * from "./forms/generated-form-group";

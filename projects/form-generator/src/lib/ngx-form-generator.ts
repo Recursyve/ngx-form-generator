@@ -1,5 +1,7 @@
 import { Injectable } from "@angular/core";
 import { AbstractControl, FormBuilder, FormGroup } from "@angular/forms";
+import { GeneratedFormControl } from "./forms/generated-form-control";
+import { GeneratedFormGroup } from "./forms/generated-form-group";
 import { ControlModel } from "./models/control.model";
 import { GroupModel } from "./models/group.model";
 
@@ -17,9 +19,9 @@ export class NgxFormGenerator {
             if (control.type === "Array") {
                 formControl = this.builder.array([]);
             } else if ((control as GroupModel).children) {
-                formControl = this.generateGroup((control as GroupModel).children, this.builder.group({}));
+                formControl = new GeneratedFormGroup(this, (control as GroupModel).children);
             } else {
-                formControl = this.builder.control(control.defaultValue, ...(control as ControlModel).validators);
+                formControl = new GeneratedFormControl(control);
             }
             group.addControl(control.name, formControl);
         }
