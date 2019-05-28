@@ -4,7 +4,6 @@
 
 import { ModuleWithProviders, NgModule, ValueProvider } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { NgxFormGenerator } from "./lib/ngx-form-generator";
 import { ngxFormGeneratorFactory } from "./lib/ngx-form-generator.factory";
 import { NgxFormGeneratorScanner } from "./lib/ngx-form-generator.scanner";
 
@@ -16,13 +15,12 @@ export class NgxFormGeneratorModule {
         return {
             ngModule: NgxFormGeneratorModule,
             providers: [
-                NgxFormGenerator,
                 NgxFormGeneratorScanner,
                 ...providers.map(x => {
                     return {
                         provide: x.provide,
                         useFactory: ngxFormGeneratorFactory(x.useValue as () => void),
-                        deps: [NgxFormGenerator, NgxFormGeneratorScanner]
+                        deps: [NgxFormGeneratorScanner]
                     };
                 })
             ]
@@ -32,3 +30,4 @@ export class NgxFormGeneratorModule {
 
 export * from "./lib";
 export * from "./lib/decorators";
+export * from "./lib/forms";
