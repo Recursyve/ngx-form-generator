@@ -1,7 +1,6 @@
 import "reflect-metadata";
 import { CONTROL, CONTROLS } from "../constant";
 import { ArrayModel } from "../models/array.model";
-import { GroupConfigModel, GroupModel } from "../models/group.model";
 
 export class ArrayHandler {
     public static setup(type?: () => void): PropertyDecorator {
