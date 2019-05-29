@@ -8,12 +8,12 @@ export class GroupHandler {
             let group: GroupModel = Reflect.getMetadata(CONTROL.replace("{name}", propertyKey), target);
             const controlType = Reflect.getMetadata("design:type", target, propertyKey);
             if (!group) {
-                const children = Reflect.getMetadata(CONTROLS, controlType.prototype);
+                const children = Reflect.getMetadata(CONTROLS, controlType.prototype) as string[];
                 group = {
                     name: null,
                     key: null,
                     type: null,
-                    children
+                    children: children.map(x => Reflect.getMetadata(CONTROL.replace("{name}", x), target))
                 };
                 const controls: string[] = Reflect.getMetadata(CONTROLS, target) || [];
                 controls.push(propertyKey);

@@ -1,5 +1,5 @@
-import { GeneratedFormControl } from "./generated-form-control";
 import { Validators } from "@angular/forms";
+import { GeneratedFormControl } from "./generated-form";
 
 describe("GeneratedFormControl", () => {
     let textControl: GeneratedFormControl<string>;

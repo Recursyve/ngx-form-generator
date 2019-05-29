@@ -8,7 +8,10 @@ export class ArrayHandler {
             let array: ArrayModel = Reflect.getMetadata(CONTROL.replace("{name}", propertyKey), target);
             const controlType = Reflect.getMetadata("design:type", target, propertyKey);
             if (!array) {
-                const children = type ? Reflect.getMetadata(CONTROLS, type.prototype) : null;
+                const children = type ?
+                    (Reflect.getMetadata(CONTROLS, type.prototype) as string[])
+                        .map(x => Reflect.getMetadata(CONTROL.replace("{name}", x), target))
+                    : null;
                 array = {
                     name: null,
                     key: null,

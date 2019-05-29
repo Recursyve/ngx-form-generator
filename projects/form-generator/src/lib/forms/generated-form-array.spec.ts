@@ -1,5 +1,5 @@
-import { GeneratedFormArray } from "./generated-form-array";
 import { Validators } from "@angular/forms";
+import { GeneratedFormArray } from "./generated-form";
 
 class Test {
     public text: string;

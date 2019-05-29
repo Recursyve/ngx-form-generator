@@ -1,0 +1,20 @@
+<div [formGroup]="formGroup">
+    <label>
+        Test:
+        <input formControlName="test">
+        {{ formGroup.controls.test.dirty }}
+    </label>
+    <h5>Group</h5>
+    <div formGroupName="group">
+        <label>
+            Test in group:
+            <input formControlName="test">
+            {{ formGroup.controls.group.controls.test.dirty }}
+        </label>
+    </div>
+
+    <button (click)="setValues()">Set values</button>
+    <button (click)="getValues()">Show values</button>
+
+    <span> {{ values | json }} </span>
+</div>

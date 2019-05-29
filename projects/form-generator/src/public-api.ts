@@ -28,6 +28,5 @@ export class NgxFormGeneratorModule {
     }
 }
 
-export * from "./lib";
 export * from "./lib/decorators";
 export * from "./lib/forms";
