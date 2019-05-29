@@ -11,7 +11,7 @@ import { GeneratedControl } from "./generated-control";
 export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl {
     public controls: { [key: string]: GeneratedControl };
 
-    constructor(private models: (ControlModel | GroupModel)[]) {
+    constructor(private models: (ControlModel | GroupModel | ArrayModel)[]) {
         super({});
         this.generateControls();
     }
