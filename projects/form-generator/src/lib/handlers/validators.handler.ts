@@ -3,6 +3,7 @@ import { ValidatorFn } from "@angular/forms";
 import { ControlModel } from "../models/control.model";
 import { ControlHandler } from "./control.handler";
 
+// @dynamic
 export class ValidatorsHandler {
     public static setup(fn: ValidatorFn) {
         return (target: object, propertyKey: string) => {

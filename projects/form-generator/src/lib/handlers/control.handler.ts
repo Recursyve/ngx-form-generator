@@ -2,6 +2,7 @@ import "reflect-metadata";
 import { CONTROL, CONTROLS } from "../constant";
 import { ControlConfigModel, ControlModel } from "../models/control.model";
 
+// @dynamic
 export class ControlHandler {
     public static setup(config: ControlConfigModel = {}): PropertyDecorator {
         return (target: object, propertyKey: string) => {

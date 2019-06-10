@@ -7,11 +7,17 @@ import { GeneratedControl } from "./generated-control";
 
 @Injectable()
 export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl {
-    public controls: { [key: string]: GeneratedControl };
+    // tslint:disable-next-line:variable-name
+    private _models: (ControlModel | GroupModel | ArrayModel)[];
 
-    constructor(private models: (ControlModel | GroupModel | ArrayModel)[]) {
-        super({});
+    public controls: { [key: string]: GeneratedControl };
+    public set models(models: (ControlModel | GroupModel | ArrayModel)[]) {
+        this._models = models;
         this.generateControls();
+    }
+
+    constructor() {
+        super({});
     }
 
     public patchValue(value: T, options?: { onlySelf?: boolean; emitEvent?: boolean }): void {
@@ -20,22 +26,8 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
                 continue;
             }
 
-            const model = this.models.find(x => x.name === key);
+            const model = this._models.find(x => x.name === key);
             this.controls[key].patchValue(value[model.key], options);
-        }
-    }
-
-    public markAsDirty(opts?: { onlySelf?: boolean; }): void {
-        if (opts.onlySelf === undefined) {
-            return super.markAsDirty(opts);
-        }
-
-        for (const key in this.controls) {
-            if (!this.controls.hasOwnProperty(key)) {
-                continue;
-            }
-
-            this.controls[key].markAsDirty();
         }
     }
 
@@ -48,7 +40,7 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
             }
 
             const control = this.controls[key];
-            const model = this.models.find(x => x.name === key);
+            const model = this._models.find(x => x.name === key);
             rawValue[model.key] = control.getRawValue();
         }
 
@@ -56,16 +48,19 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
     }
 
     public copy(): GeneratedFormGroup<T> {
-        return new GeneratedFormGroup<T>(this.models);
+        const group = new GeneratedFormGroup<T>();
+        group.models = this._models;
+        return group;
     }
 
     private generateControls() {
-        for (const control of this.models) {
+        for (const control of this._models) {
             let formControl: AbstractControl;
             if (control.type === "Array") {
                 formControl = new GeneratedFormArray(control as ArrayModel);
             } else if ((control as GroupModel).children) {
-                formControl = new GeneratedFormGroup((control as GroupModel).children);
+                formControl = new GeneratedFormGroup();
+                (formControl as GeneratedFormGroup<T>)._models = (control as GroupModel).children;
             } else {
                 formControl = new GeneratedFormControl(control);
             }
@@ -109,7 +104,13 @@ export class GeneratedFormArray<T> extends FormArray implements GeneratedControl
     }
 
     private getControl(): AbstractControl {
-        return this.model.children ? new GeneratedFormGroup(this.model.children) : new GeneratedFormControl({
+        if (this.model.children) {
+            const group = new GeneratedFormGroup();
+            group.models = this.model.children;
+            return group;
+        }
+
+        return new GeneratedFormControl({
             ...this.model,
             type: (this.model.arrayType as () => void).name
         });

@@ -12,17 +12,18 @@ import { NgxFormGeneratorScanner } from "./lib/ngx-form-generator.scanner";
 })
 export class NgxFormGeneratorModule {
     public static forFeature(...providers: ValueProvider[]): ModuleWithProviders {
+        const p = providers.map(x => {
+            return {
+                provide: x.provide,
+                useFactory: ngxFormGeneratorFactory(x.useValue),
+                deps: [NgxFormGeneratorScanner]
+            };
+        });
         return {
             ngModule: NgxFormGeneratorModule,
             providers: [
                 NgxFormGeneratorScanner,
-                ...providers.map(x => {
-                    return {
-                        provide: x.provide,
-                        useFactory: ngxFormGeneratorFactory(x.useValue as () => void),
-                        deps: [NgxFormGeneratorScanner]
-                    };
-                })
+                ...p
             ]
         };
     }

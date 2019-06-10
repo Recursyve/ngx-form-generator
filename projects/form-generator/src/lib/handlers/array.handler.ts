@@ -2,6 +2,7 @@ import "reflect-metadata";
 import { CONTROL, CONTROLS } from "../constant";
 import { ArrayModel } from "../models/array.model";
 
+// @dynamic
 export class ArrayHandler {
     public static setup(type?: () => void): PropertyDecorator {
         return (target: object, propertyKey: string) => {

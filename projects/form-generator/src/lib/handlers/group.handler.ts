@@ -2,6 +2,7 @@ import "reflect-metadata";
 import { CONTROL, CONTROLS } from "../constant";
 import { GroupConfigModel, GroupModel } from "../models/group.model";
 
+// @dynamic
 export class GroupHandler {
     public static setup(config: GroupConfigModel = {}): PropertyDecorator {
         return (target: object, propertyKey: string) => {
