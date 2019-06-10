@@ -1,27 +1,90 @@
-# FormGeneratorApp
+# NgxFormGenerator
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.3.8.
+NgxFormGenerator is an Angular ReactiveForms helper that will makes your form cleaner and safer.
 
-## Development server
+## Installation
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+```
+npm install --save @recursyve/ngx-form-generator
+```
 
-## Code scaffolding
+## Usage example
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+NgxFormGenerator will generate an implementation of FormGroup for you. We use decorators to describe our FormGroup.
 
-## Build
+```typescript
+import { Control } from "@recursyve/ngx-form-generator"
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+class TestDto {
+    @Control()
+    example: string;
+    
+    @Control()
+    date: Date;
+    
+    @Control()
+    year: number;
+}
+```
 
-## Running unit tests
+This will generate a FormGroup that is equivalent to this FormBuilder example
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+```typescript
+const group = builder.group({
+    example: [''],
+    date: [null],
+    year: [null]
+});
+```
 
-## Running end-to-end tests
+If you want to use validators on your controls, you can add them on top of each properties
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+```typescript
+import { Control, Required } from "@recursyve/ngx-form-generator"
 
-## Further help
+class TestDto {
+    @Control()
+    @Required()
+    example: string;
+    
+    @Control()
+    @Required()
+    date: Date;
+    
+    @Control()
+    @Required()
+    year: number;
+}
+```
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+The next step is load TestDto in your module
+
+```typescript
+@Module({
+    import: [
+        BrowserModule,
+        NgxFormGeneratorModule.forFeature(
+            {
+                provide: "Test",
+                useValue: TestDto
+            }
+        ),
+    ]
+})
+class AppModule {
+}
+```
+
+You can now load your generated FormGroup in your component
+
+```typescript
+@Component({
+    selector: "app-root",
+    templateUrl: "app.template.html"
+})
+class AppCompnent {
+    constructor(@Inject("Test") public formGroup: GeneratedFormGroup<TestDto>) {}
+}
+```
+
+GeneratedFormGroup is an implementation of FormGroup. Everything that you used to do with a FormGroup will still works.
