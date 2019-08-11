@@ -14,7 +14,7 @@ export class GroupHandler {
                     name: null,
                     key: null,
                     type: null,
-                    children: children.map(x => Reflect.getMetadata(CONTROL.replace("{name}", x), target))
+                    children: children.map(x => Reflect.getMetadata(CONTROL.replace("{name}", x), controlType.prototype))
                 };
                 const controls: string[] = Reflect.getMetadata(CONTROLS, target) || [];
                 controls.push(propertyKey);

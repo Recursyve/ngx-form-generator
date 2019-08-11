@@ -4,20 +4,17 @@ import { ArrayModel } from "../models/array.model";
 
 // @dynamic
 export class ArrayHandler {
-    public static setup(type?: () => void): PropertyDecorator {
+    public static setup(type: () => void): PropertyDecorator {
         return (target: object, propertyKey: string) => {
             let array: ArrayModel = Reflect.getMetadata(CONTROL.replace("{name}", propertyKey), target);
             const controlType = Reflect.getMetadata("design:type", target, propertyKey);
             if (!array) {
-                const children = type ?
-                    (Reflect.getMetadata(CONTROLS, type.prototype) as string[])
-                        .map(x => Reflect.getMetadata(CONTROL.replace("{name}", x), target))
-                    : null;
+                const children = Reflect.getMetadata(CONTROLS, type.prototype) as string[];
                 array = {
                     name: null,
                     key: null,
                     type: null,
-                    children
+                    children: children ? children.map(x => Reflect.getMetadata(CONTROL.replace("{name}", x), type.prototype)) : null
                 };
                 const controls: string[] = Reflect.getMetadata(CONTROLS, target) || [];
                 controls.push(propertyKey);

@@ -20,7 +20,16 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
         super({});
     }
 
+    public setModels(models: (ControlModel | GroupModel | ArrayModel)[]) {
+        this._models = models;
+        this.generateControls();
+    }
+
     public patchValue(value: T, options?: { onlySelf?: boolean; emitEvent?: boolean }): void {
+        if (!value) {
+            return;
+        }
+
         for (const key in this.controls) {
             if (!this.controls.hasOwnProperty(key)) {
                 continue;
@@ -60,7 +69,7 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
                 formControl = new GeneratedFormArray(control as ArrayModel);
             } else if ((control as GroupModel).children) {
                 formControl = new GeneratedFormGroup();
-                (formControl as GeneratedFormGroup<T>)._models = (control as GroupModel).children;
+                (formControl as GeneratedFormGroup<T>).setModels((control as GroupModel).children);
             } else {
                 formControl = new GeneratedFormControl(control);
             }
@@ -76,12 +85,20 @@ export class GeneratedFormArray<T> extends FormArray implements GeneratedControl
         super([]);
     }
 
-    public push(): void {
-        super.push(this.getControl());
+    public push(value: unknown | T): void {
+        const control = this.getControl();
+        if (value) {
+            control.patchValue(value);
+        }
+        super.push(control);
     }
 
-    public insert(index: number): void {
-        super.insert(index, this.getControl());
+    public insert(index: number, value: unknown | T): void {
+        const control = this.getControl();
+        if (value) {
+            control.patchValue(value);
+        }
+        super.insert(index, control);
     }
 
     public at(index: number): GeneratedControl {
@@ -89,10 +106,14 @@ export class GeneratedFormArray<T> extends FormArray implements GeneratedControl
     }
 
     public patchValue(value: T[], options?: { onlySelf?: boolean; emitEvent?: boolean }): void {
+        if (!value) {
+            return;
+        }
+
         let i = 0;
         for (const data of value) {
             if (i >= this.controls.length) {
-                this.push();
+                this.push(null);
             }
             this.at(i).patchValue(data, options);
             ++i;
