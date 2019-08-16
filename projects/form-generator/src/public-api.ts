@@ -33,11 +33,14 @@ export class NgxFormGeneratorModule {
 // @dynamic
 export class NgxFormGeneratorProvider {
     public static forFeature(providers: Provider[]): Provider[] {
-        return providers.map(provider => ({
-            provide: (provider as ValueProvider).provide || GeneratedFormGroup,
-            useFactory: ngxFormGeneratorFactory((provider as ValueProvider).useValue || provider),
-            deps: [NgxFormGeneratorScanner]
-        }));
+        return [
+                ...providers.map(provider => ({
+                provide: (provider as ValueProvider).provide || GeneratedFormGroup,
+                useFactory: ngxFormGeneratorFactory((provider as ValueProvider).useValue || provider),
+                deps: [NgxFormGeneratorScanner]
+            })),
+            NgxFormGeneratorScanner
+        ];
     }
 }
 

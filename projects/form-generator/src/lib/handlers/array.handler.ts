@@ -15,12 +15,10 @@ export class ArrayHandler {
                 Reflect.defineMetadata(CONTROLS, controls, target);
             }
             array = {
-                ...array,
-                name: array.name || propertyKey,
+                name: propertyKey,
                 key: propertyKey,
                 type: controlType.name,
                 arrayType: type,
-                defaultValue: array.defaultValue,
                 children: children ? children.map(x => Reflect.getMetadata(CONTROL.replace("{name}", x), type.prototype)) : null
             };
             Reflect.defineMetadata(CONTROL.replace("{name}", propertyKey), array, target);
