@@ -8,14 +8,8 @@ export class GroupHandler {
         return (target: object, propertyKey: string) => {
             let group: GroupModel = Reflect.getMetadata(CONTROL.replace("{name}", propertyKey), target);
             const controlType = Reflect.getMetadata("design:type", target, propertyKey);
+            const children = Reflect.getMetadata(CONTROLS, controlType.prototype) as string[];
             if (!group) {
-                const children = Reflect.getMetadata(CONTROLS, controlType.prototype) as string[];
-                group = {
-                    name: null,
-                    key: null,
-                    type: null,
-                    children: children.map(x => Reflect.getMetadata(CONTROL.replace("{name}", x), controlType.prototype))
-                };
                 const controls: string[] = Reflect.getMetadata(CONTROLS, target) || [];
                 controls.push(propertyKey);
                 Reflect.defineMetadata(CONTROLS, controls, target);
@@ -25,7 +19,8 @@ export class GroupHandler {
                 name: config.name || propertyKey,
                 key: propertyKey,
                 type: controlType.name,
-                defaultValue: config.defaultValue
+                defaultValue: config.defaultValue,
+                children: children.map(x => Reflect.getMetadata(CONTROL.replace("{name}", x), controlType.prototype))
             };
             Reflect.defineMetadata(CONTROL.replace("{name}", propertyKey), group, target);
         };

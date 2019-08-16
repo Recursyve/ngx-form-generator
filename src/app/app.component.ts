@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from "@angular/core";
+import { Component, Inject } from "@angular/core";
 import { GeneratedFormGroup } from "../../projects/form-generator/src/lib/forms";
 import { TestDto } from "./dto/test.dto";
 
@@ -6,14 +6,10 @@ import { TestDto } from "./dto/test.dto";
     selector: "app-root",
     templateUrl: "app.template.html"
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
     public values: TestDto;
 
     constructor(@Inject("Test") public formGroup: GeneratedFormGroup<TestDto>) {
-    }
-
-    public ngOnInit() {
-        console.log("sss");
     }
 
     public setValues() {

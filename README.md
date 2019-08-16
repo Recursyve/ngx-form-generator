@@ -63,12 +63,12 @@ The next step is load TestDto in your module
 @Module({
     import: [
         BrowserModule,
-        NgxFormGeneratorModule.forFeature(
+        NgxFormGeneratorModule.forFeature([
             {
                 provide: "Test",
                 useValue: TestDto
             }
-        ),
+        ]),
     ]
 })
 class AppModule {
@@ -84,6 +84,19 @@ You can now load your generated FormGroup in your component
 })
 class AppCompnent {
     constructor(@Inject("Test") public formGroup: GeneratedFormGroup<TestDto>) {}
+}
+```
+
+You can also provide your Dto directly in the components
+
+```typescript
+@Component({
+    selector: "app-root",
+    templateUrl: "app.template.html",
+    providers: NgxFormGeneratorProvider.forFeature([TestDto)]
+})
+class AppCompnent {
+    constructor(public formGroup: GeneratedFormGroup<TestDto>) {}
 }
 ```
 

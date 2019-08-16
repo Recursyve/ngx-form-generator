@@ -8,43 +8,36 @@ import { GeneratedFormGroup } from "./lib/forms";
 import { ngxFormGeneratorFactory } from "./lib/ngx-form-generator.factory";
 import { NgxFormGeneratorScanner } from "./lib/ngx-form-generator.scanner";
 
+// @dynamic
 @NgModule({
     imports: [FormsModule, ReactiveFormsModule]
 })
 export class NgxFormGeneratorModule {
-    public static forFeature(...providers: Provider[]): ModuleWithProviders {
-        const p = providers.map(x => {
-            const value = (x as ValueProvider).useValue || x;
-            const provide = (x as ValueProvider).provide || GeneratedFormGroup;
-            return {
-                provide: provide,
-                useFactory: ngxFormGeneratorFactory(value),
-                deps: [NgxFormGeneratorScanner]
-            };
-        });
+    public static forFeature(providers: Provider[]): ModuleWithProviders {
         return {
             ngModule: NgxFormGeneratorModule,
             providers: [
                 NgxFormGeneratorScanner,
-                ...p
+                ...providers.map(provider => {
+                    return {
+                        provide: (provider as ValueProvider).provide || GeneratedFormGroup,
+                        useFactory: ngxFormGeneratorFactory((provider as ValueProvider).useValue || provider),
+                        deps: [NgxFormGeneratorScanner]
+                    };
+                })
             ]
         };
     }
 }
 
+// @dynamic
 export class NgxFormGeneratorProvider {
-    public static forFeature(...providers: Provider[]): Provider[] {
-        const res: Provider[] = [NgxFormGeneratorScanner];
-        for (const provider of providers) {
-            const value = (provider as ValueProvider).useValue || provider;
-            const provide = (provider as ValueProvider).provide || GeneratedFormGroup;
-            res.push({
-                provide: provide,
-                useFactory: ngxFormGeneratorFactory(value),
-                deps: [NgxFormGeneratorScanner]
-            })
-        }
-        return res;
+    public static forFeature(providers: Provider[]): Provider[] {
+        return providers.map(provider => ({
+            provide: (provider as ValueProvider).provide || GeneratedFormGroup,
+            useFactory: ngxFormGeneratorFactory((provider as ValueProvider).useValue || provider),
+            deps: [NgxFormGeneratorScanner]
+        }));
     }
 }
 
