@@ -34,7 +34,7 @@ export class NgxFormGeneratorModule {
 export class NgxFormGeneratorProvider {
     public static forFeature(providers: Provider[]): Provider[] {
         return [
-                ...providers.map(provider => ({
+            providers.map(provider => ({
                 provide: (provider as ValueProvider).provide || GeneratedFormGroup,
                 useFactory: ngxFormGeneratorFactory((provider as ValueProvider).useValue || provider),
                 deps: [NgxFormGeneratorScanner]

@@ -147,17 +147,6 @@ export class GeneratedFormControl<T> extends FormControl implements GeneratedCon
         switch (this.model.type) {
             case "Number":
                 return +this.value as any;
-            case "Date":
-                const date = this.value as Date;
-                return new Date(Date.UTC(
-                    date.getUTCFullYear(),
-                    date.getUTCMonth(),
-                    date.getUTCDate(),
-                    date.getUTCHours(),
-                    date.getUTCMinutes(),
-                    date.getUTCSeconds(),
-                    date.getUTCMilliseconds()
-                )) as any;
             default:
                 return this.value;
         }
