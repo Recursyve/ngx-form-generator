@@ -1,10 +1,13 @@
 import { GeneratedFormGroup } from "./forms";
+import { GroupModel } from "./models/group.model";
 import { NgxFormGeneratorScanner } from "./ngx-form-generator.scanner";
 
 export function ngxFormGeneratorFactory(provider: any) {
-    return (scanner: NgxFormGeneratorScanner) => {
+    return () => {
         const group = new GeneratedFormGroup();
-        group.models = scanner.getControls(provider);
+        group.setConfig({
+            children: NgxFormGeneratorScanner.getControls(provider)
+        } as GroupModel);
         return group;
     };
 }

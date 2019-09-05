@@ -9,19 +9,17 @@ import { GeneratedControl } from "./generated-control";
 export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl {
     // tslint:disable-next-line:variable-name
     private _models: (ControlModel | GroupModel | ArrayModel)[];
+    private config: GroupModel;
 
     public controls: { [key: string]: GeneratedControl };
-    public set models(models: (ControlModel | GroupModel | ArrayModel)[]) {
-        this._models = models;
-        this.generateControls();
-    }
 
     constructor() {
         super({});
     }
 
-    public setModels(models: (ControlModel | GroupModel | ArrayModel)[]) {
-        this._models = models;
+    public setConfig(config: GroupModel) {
+        this.config = config;
+        this._models = config.children;
         this.generateControls();
     }
 
@@ -43,6 +41,7 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
     public getRawValue(): T {
         const rawValue = {} as T;
 
+        const optional = !this.shouldValidate();
         for (const key in this.controls) {
             if (!this.controls.hasOwnProperty(key)) {
                 continue;
@@ -50,15 +49,31 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
 
             const control = this.controls[key];
             const model = this._models.find(x => x.name === key);
-            rawValue[model.key] = control.getRawValue();
+            const value = control.getRawValue();
+            if (!optional || (typeof value !== "undefined" && value !== null)) {
+                rawValue[model.key] = value;
+            }
         }
 
-        return rawValue;
+        if (!optional || !!Object.keys(rawValue).length) {
+            return rawValue;
+        }
+    }
+
+    public shouldValidate(): boolean {
+        let parentValidation = true;
+        if (this.parent) {
+            parentValidation = (this.parent as any as GeneratedControl).shouldValidate();
+        }
+        if (!this.config) {
+            return true;
+        }
+        return (this.config.validationOption || { isOptional: false }).isOptional ? false : parentValidation;
     }
 
     public copy(): GeneratedFormGroup<T> {
         const group = new GeneratedFormGroup<T>();
-        group.models = this._models;
+        group.setConfig(this.config);
         return group;
     }
 
@@ -69,7 +84,7 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
                 formControl = new GeneratedFormArray(control as ArrayModel);
             } else if ((control as GroupModel).children) {
                 formControl = new GeneratedFormGroup();
-                (formControl as GeneratedFormGroup<T>).setModels((control as GroupModel).children);
+                (formControl as GeneratedFormGroup<T>).setConfig(control as GroupModel);
             } else {
                 formControl = new GeneratedFormControl(control);
             }
@@ -124,10 +139,20 @@ export class GeneratedFormArray<T> extends FormArray implements GeneratedControl
         return this.controls.map(x => x.getRawValue());
     }
 
+    public shouldValidate(): boolean {
+        if (this.parent) {
+            return (this.parent as any as GeneratedControl).shouldValidate();
+        }
+        if (!this.model) {
+            return true;
+        }
+        return (this.model.validationOption || { isOptional: false }).isOptional;
+    }
+
     private getControl(): AbstractControl {
         if (this.model.children) {
             const group = new GeneratedFormGroup();
-            group.models = this.model.children;
+            group.setConfig(this.model);
             return group;
         }
 
@@ -146,9 +171,24 @@ export class GeneratedFormControl<T> extends FormControl implements GeneratedCon
     public getRawValue(): T {
         switch (this.model.type) {
             case "Number":
+                if (this.model.validationOption && this.model.validationOption.ignoreZero) {
+                    return;
+                }
+
                 return +this.value as any;
             default:
                 return this.value;
         }
+    }
+
+    public shouldValidate(): boolean {
+        if (this.parent) {
+            return (this.parent as any as GeneratedControl).shouldValidate();
+        }
+
+        if (!this.model) {
+            return true;
+        }
+        return !(this.model.validationOption || { isOptional: false }).isOptional;
     }
 }
