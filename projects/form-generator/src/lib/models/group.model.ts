@@ -6,6 +6,7 @@ export interface GroupModel {
     name: string;
     key: string;
     type: string;
+    formElementType: string;
     children: (ControlModel | GroupModel | ArrayModel)[];
     validationOption?: ValidationOptionModel;
     defaultValue?: any;

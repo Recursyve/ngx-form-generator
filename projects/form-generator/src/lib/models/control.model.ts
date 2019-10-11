@@ -5,6 +5,7 @@ export interface ControlModel {
     name: string;
     key: string;
     type: string;
+    formElementType: string;
     defaultValue?: any;
     validators?: ValidatorFn[];
     validationOption?: ValidationOptionModel;

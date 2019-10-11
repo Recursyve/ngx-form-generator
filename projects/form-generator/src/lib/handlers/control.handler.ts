@@ -25,6 +25,7 @@ export class ControlHandler {
             control = {
                 name: null,
                 key: null,
+                formElementType: "control",
                 type: null,
                 validators: []
             };

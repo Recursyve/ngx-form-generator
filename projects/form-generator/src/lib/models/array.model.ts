@@ -6,6 +6,7 @@ export interface ArrayModel {
     name: string;
     key: string;
     type: string;
+    formElementType: string;
     arrayType?: object;
     children: (ControlModel | GroupModel | ArrayModel)[];
     validationOption?: ValidationOptionModel;

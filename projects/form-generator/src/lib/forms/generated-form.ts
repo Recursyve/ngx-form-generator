@@ -74,9 +74,9 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
     private generateControls() {
         for (const control of this._models) {
             let formControl: AbstractControl;
-            if (control.type === "Array") {
+            if (control.formElementType === "array") {
                 formControl = new GeneratedFormArray(control as ArrayModel);
-            } else if ((control as GroupModel).children) {
+            } else if (control.formElementType === "group") {
                 formControl = new GeneratedFormGroup();
                 (formControl as GeneratedFormGroup<T>).setConfig(control as GroupModel);
             } else {

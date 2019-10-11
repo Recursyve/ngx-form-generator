@@ -16,6 +16,7 @@ export class ArrayHandler {
             array = {
                 name: propertyKey,
                 key: propertyKey,
+                formElementType: "array",
                 type: "Array",
                 arrayType: type,
                 children: children ? children.map(x => Reflect.getMetadata(CONTROL.replace("{name}", x), type.prototype)) : null
