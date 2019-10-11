@@ -41,7 +41,6 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
     public getRawValue(): T {
         const rawValue = {} as T;
 
-        const optional = !this.shouldValidate();
         for (const key in this.controls) {
             if (!this.controls.hasOwnProperty(key)) {
                 continue;
@@ -49,15 +48,10 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
 
             const control = this.controls[key];
             const model = this._models.find(x => x.name === key);
-            const value = control.getRawValue();
-            if (!optional || (typeof value !== "undefined" && value !== null)) {
-                rawValue[model.key] = value;
-            }
+            rawValue[model.key] = control.getRawValue();
         }
 
-        if (!optional || !!Object.keys(rawValue).length) {
-            return rawValue;
-        }
+        return rawValue;
     }
 
     public shouldValidate(): boolean {
@@ -171,7 +165,7 @@ export class GeneratedFormControl<T> extends FormControl implements GeneratedCon
     public getRawValue(): T {
         switch (this.model.type) {
             case "Number":
-                if (this.model.validationOption && this.model.validationOption.ignoreZero) {
+                if (this.model.validationOption && this.model.validationOption.ignoreZero && +this.value === 0) {
                     return;
                 }
 
