@@ -8,12 +8,12 @@ import { ReactiveFormsModule } from "@angular/forms";
 @NgModule({
     imports: [
         BrowserModule,
-        NgxFormGeneratorModule.forFeature(
+        NgxFormGeneratorModule.forFeature([
             {
                 provide: "Test",
                 useValue: TestDto
             }
-        ),
+        ]),
         ReactiveFormsModule
     ],
     declarations: [AppComponent],

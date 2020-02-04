@@ -8,3 +8,4 @@ export * from "./min.decorator";
 export * from "./min-length.decorator";
 export * from "./optional.decorator";
 export * from "./required.decorator";
+export * from "./value-is.decorator";

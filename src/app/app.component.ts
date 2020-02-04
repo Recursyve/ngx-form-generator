@@ -8,6 +8,7 @@ import { TestDto } from "./dto/test.dto";
 })
 export class AppComponent {
     public values: TestDto;
+    public valid: any;
 
     constructor(@Inject("Test") public formGroup: GeneratedFormGroup<TestDto>) {
     }
@@ -23,5 +24,12 @@ export class AppComponent {
 
     public getValues() {
         this.values = this.formGroup.getRawValue();
+    }
+
+    public getValid() {
+        this.valid = {
+            test: this.formGroup.valid,
+            group: this.formGroup.controls.group.valid
+        };
     }
 }
