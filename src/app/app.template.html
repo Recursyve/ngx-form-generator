@@ -13,8 +13,17 @@
         </label>
     </div>
 
-    <button (click)="setValues()">Set values</button>
-    <button (click)="getValues()">Show values</button>
+    <div>
+        <button (click)="setValues()">Set values</button>
+    </div>
 
-    <span> {{ values | json }} </span>
+    <div>
+        <button (click)="getValues()">Show values</button>
+        <span> {{ values | json }} </span>
+    </div>
+
+    <div>
+        <button (click)="getValid()">Show group valid</button>
+        <span> {{ valid | json }} </span>
+    </div>
 </div>

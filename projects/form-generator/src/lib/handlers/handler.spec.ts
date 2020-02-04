@@ -1,7 +1,16 @@
-import { Validators } from "@angular/forms";
 import { CONTROLS } from "../constant";
 import { Control, Group } from "../decorators/controls";
-import { Email, MatchesControl, MatchesPattern, Max, MaxLength, Min, MinLength, Required } from "../decorators/validators";
+import {
+    Email,
+    MatchesControl,
+    MatchesPattern,
+    Max,
+    MaxLength,
+    Min,
+    MinLength,
+    Required,
+    ValueIs
+} from "../decorators/validators";
 import { ControlModel } from "../models/control.model";
 import { GroupModel } from "../models/group.model";
 import { ControlHandler } from "./control.handler";
@@ -77,6 +86,10 @@ class TestC {
     @Control()
     @Required()
     required: string;
+
+    @Control()
+    @ValueIs(true)
+    valueIs: boolean;
 }
 
 describe("Handler Tests", () => {
@@ -157,10 +170,10 @@ describe("Handler Tests", () => {
     });
 
     describe("Validators", () => {
-        it("TestC Metadata should contain nine controls", () => {
+        it("TestC Metadata should contain ten controls", () => {
             const controls: ControlModel[] = Reflect.getMetadata(CONTROLS, TestC.prototype);
             expect(controls).toBeDefined();
-            expect(controls.length).toBe(9);
+            expect(controls.length).toBe(10);
         });
 
         it("TestC control1 Metadata should contains eight validators", () => {
