@@ -36,3 +36,4 @@ export class NgxFormGeneratorProvider {
 export * from "./lib/decorators";
 export * from "./lib/forms";
 export * from "./lib/ngx-form-generator.factory";
+export * from "./lib/handlers/validators.handler";
