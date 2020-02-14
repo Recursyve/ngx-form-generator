@@ -12,7 +12,7 @@ import { ngxFormGeneratorFactory } from "./lib/ngx-form-generator.factory";
     imports: [FormsModule, ReactiveFormsModule]
 })
 export class NgxFormGeneratorModule {
-    public static forFeature(providers: Provider[]): ModuleWithProviders {
+    public static forFeature(providers: Provider[]): ModuleWithProviders<NgxFormGeneratorModule> {
         return {
             ngModule: NgxFormGeneratorModule,
             providers: providers.map(provider => ({
