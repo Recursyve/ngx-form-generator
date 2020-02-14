@@ -147,17 +147,12 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
-          "options": {
-            "tsConfig": "projects/form-generator/tsconfig.lib.json",
-            "project": "projects/form-generator/ng-package.json"
-          }
-        ,          "configurations": {
-            "production": {
-              "tsConfig": "projects/form-generator/tsconfig.lib.prod.json"
+            "builder": "@angular-devkit/build-ng-packagr:build",
+            "options": {
+                "tsConfig": "projects/form-generator/tsconfig.lib.json",
+                "project": "projects/form-generator/ng-package.json"
             }
-          }
-},
+        },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {

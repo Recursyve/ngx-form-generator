@@ -1,9 +1,14 @@
-import { Injectable } from "@angular/core";
-import { AbstractControl, FormArray, FormControl, FormGroup } from "@angular/forms";
-import { ControlModel } from "../models/control.model";
+import { Inject, Injectable, Optional } from "@angular/core";
+import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors } from "@angular/forms";
+import { ControlAsyncValidators, ControlModel } from "../models/control.model";
 import { GroupModel } from "../models/group.model";
 import { ArrayModel } from "../models/array.model";
 import { GeneratedControl } from "./generated-control";
+import { NGX_FORM_GENERATOR_ASYNC_VALIDATORS } from "../validators/constant";
+import { AsyncValidator } from "../validators/async.validator";
+import { forkJoin, from, isObservable, Observable } from "rxjs";
+import { isPromise } from "rxjs/internal-compatibility";
+import { map } from "rxjs/operators";
 
 @Injectable()
 export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl {
@@ -13,7 +18,11 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
 
     public controls: { [key: string]: GeneratedControl };
 
-    constructor() {
+    constructor(
+        @Optional()
+        @Inject(NGX_FORM_GENERATOR_ASYNC_VALIDATORS)
+        private asyncValidators: AsyncValidator[] = []
+    ) {
         super({});
     }
 
@@ -75,12 +84,13 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
         for (const control of this._models) {
             let formControl: AbstractControl;
             if (control.formElementType === "array") {
-                formControl = new GeneratedFormArray(control as ArrayModel);
+                formControl = new GeneratedFormArray(control as ArrayModel, this.asyncValidators);
             } else if (control.formElementType === "group") {
-                formControl = new GeneratedFormGroup();
+                formControl = new GeneratedFormGroup(this.asyncValidators);
                 (formControl as GeneratedFormGroup<T>).setConfig(control as GroupModel);
             } else {
-                formControl = new GeneratedFormControl(control);
+                formControl = new GeneratedFormControl(control, this.asyncValidators);
+                (formControl as GeneratedFormControl<any>).setAsyncControlValidators((control as ControlModel).asyncValidators);
             }
             super.addControl(control.name, formControl);
         }
@@ -90,7 +100,7 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
 export class GeneratedFormArray<T> extends FormArray implements GeneratedControl {
     public controls: GeneratedControl[];
 
-    constructor(private model: ArrayModel) {
+    constructor(private model: ArrayModel, private asyncValidators: AsyncValidator[] = []) {
         super([]);
     }
 
@@ -150,15 +160,19 @@ export class GeneratedFormArray<T> extends FormArray implements GeneratedControl
             return group;
         }
 
-        return new GeneratedFormControl({
+        const formControl = new GeneratedFormControl({
             ...this.model,
             type: (this.model.arrayType as () => void).name
-        });
+        }, this.asyncValidators);
+        formControl.setAsyncControlValidators((this.model as ControlModel).asyncValidators);
+        return formControl;
     }
 }
 
 export class GeneratedFormControl<T> extends FormControl implements GeneratedControl {
-    constructor(private model: ControlModel) {
+    private asyncControlValidators: ControlAsyncValidators[];
+
+    constructor(private model: ControlModel, private asyncValidators: AsyncValidator[] = []) {
         super(model.defaultValue, model.validators);
     }
 
@@ -184,5 +198,41 @@ export class GeneratedFormControl<T> extends FormControl implements GeneratedCon
             return true;
         }
         return !(this.model.validationOption || { isOptional: false }).isOptional;
+    }
+
+    public setAsyncControlValidators(validators: ControlAsyncValidators[]): void {
+        this.asyncControlValidators = validators;
+        this.setAsyncValidators(this.customAsyncValidator.bind(this));
+    }
+
+    private customAsyncValidator(control: AbstractControl): Observable<ValidationErrors> {
+        if (!this.asyncControlValidators || !this.asyncValidators) {
+            return null;
+        }
+
+        const validators = this.asyncValidators.filter(x => this.asyncControlValidators.some(v => v.name === x.name));
+        const observables = validators.map(v => v.validate(control)).map(this.toObservable);
+        return forkJoin(observables).pipe(map(this._mergeErrors));
+    }
+
+    private toObservable(r: any): Observable<any> {
+        const obs = isPromise(r) ? from(r) : r;
+        if (!(isObservable(obs))) {
+            throw new Error(`Expected validator to return Promise or Observable.`);
+        }
+        return obs;
+    }
+
+    private _mergeErrors(arrayOfErrors: ValidationErrors[]): ValidationErrors | null {
+        let res: {[key: string]: any} = {};
+
+        // Not using Array.reduce here due to a Chrome 80 bug
+        // https://bugs.chromium.org/p/chromium/issues/detail?id=1049982
+        arrayOfErrors.forEach((errors: ValidationErrors | null) => {
+            // tslint:disable-next-line:no-non-null-assertion
+            res = errors != null ? { ...res !, ...errors } : res!;
+        });
+
+        return Object.keys(res).length === 0 ? null : res;
     }
 }

@@ -3,13 +3,13 @@
         Test:
         <input formControlName="test">
         {{ formGroup.controls.test.dirty }}
+        {{ formGroup.errors | json }}
     </label>
     <h5>Group</h5>
     <div formGroupName="group">
         <label>
             Test in group:
             <input formControlName="test">
-            {{ formGroup.controls.group.controls.test.dirty }}
         </label>
     </div>
 

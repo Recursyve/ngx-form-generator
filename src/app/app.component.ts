@@ -1,16 +1,19 @@
-import { Component, Inject } from "@angular/core";
-import { GeneratedFormGroup } from "../../projects/form-generator/src/lib/forms";
+import { Component } from "@angular/core";
+import { GeneratedFormGroup, NgxFormGeneratorProvider } from "@recursyve/ngx-form-generator";
 import { TestDto } from "./dto/test.dto";
 
 @Component({
     selector: "app-root",
-    templateUrl: "app.template.html"
+    templateUrl: "./app.template.html",
+    providers: [
+        ...NgxFormGeneratorProvider.forFeature([TestDto])
+    ]
 })
 export class AppComponent {
     public values: TestDto;
     public valid: any;
 
-    constructor(@Inject("Test") public formGroup: GeneratedFormGroup<TestDto>) {
+    constructor(public formGroup: GeneratedFormGroup<TestDto>) {
     }
 
     public setValues() {

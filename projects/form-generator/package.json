@@ -9,8 +9,8 @@
         "url": "https://github.com/Recursyve/forms-frontend.git"
     },
     "peerDependencies": {
-        "@angular/common": "^8.2.1",
-        "@angular/core": "^8.2.1",
-        "@angular/forms": "^8.2.1"
+        "@angular/common": "^9.0.1",
+        "@angular/core": "^9.0.1",
+        "@angular/forms": "^9.0.1"
     }
 }

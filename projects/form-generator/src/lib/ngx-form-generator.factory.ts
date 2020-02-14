@@ -1,10 +1,11 @@
 import { GeneratedFormGroup } from "./forms";
 import { GroupModel } from "./models/group.model";
 import { NgxFormGeneratorScanner } from "./ngx-form-generator.scanner";
+import { AsyncValidator } from "./validators/async.validator";
 
 export function ngxFormGeneratorFactory(provider: any) {
-    return () => {
-        const group = new GeneratedFormGroup();
+    return (asyncValidators: AsyncValidator[]) => {
+        const group = new GeneratedFormGroup(asyncValidators);
         group.setConfig({
             children: NgxFormGeneratorScanner.getControls(provider)
         } as GroupModel);

@@ -1,4 +1,5 @@
-import { Control, Group } from "../../../projects/form-generator/src/public-api";
+import { Control, Group } from "@recursyve/ngx-form-generator";
+import { AsyncValidation } from "../validators/async.validator";
 
 export class GroupTestDto {
     @Control()
@@ -7,6 +8,7 @@ export class GroupTestDto {
 
 export class TestDto {
     @Control()
+    @AsyncValidation()
     test: string;
 
     @Group()
