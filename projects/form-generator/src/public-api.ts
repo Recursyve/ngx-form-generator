@@ -12,6 +12,7 @@ export interface NgxFormGeneratorOptions {
     asyncValidators?: Provider[];
 }
 
+// @dynamic
 @NgModule({
     imports: [FormsModule, ReactiveFormsModule]
 })
@@ -46,6 +47,7 @@ export class NgxFormGeneratorModule {
     }
 }
 
+// @dynamic
 export class NgxFormGeneratorProvider {
     public static forFeature(providers: Provider[]): Provider[] {
         return providers.map(provider => ({
