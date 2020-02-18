@@ -6,7 +6,7 @@ import { ArrayModel } from "../models/array.model";
 import { GeneratedControl } from "./generated-control";
 import { NGX_FORM_GENERATOR_ASYNC_VALIDATORS } from "../validators/constant";
 import { AsyncValidator } from "../validators/async.validator";
-import { forkJoin, from, isObservable, Observable } from "rxjs";
+import { forkJoin, from, isObservable, Observable, of } from "rxjs";
 import { isPromise } from "rxjs/internal-compatibility";
 import { map } from "rxjs/operators";
 
@@ -170,8 +170,6 @@ export class GeneratedFormArray<T> extends FormArray implements GeneratedControl
 }
 
 export class GeneratedFormControl<T> extends FormControl implements GeneratedControl {
-    private asyncControlValidators: ControlAsyncValidators[];
-
     constructor(private model: ControlModel, private asyncValidators: AsyncValidator[] = []) {
         super(model.defaultValue, model.validators);
     }
@@ -201,38 +199,21 @@ export class GeneratedFormControl<T> extends FormControl implements GeneratedCon
     }
 
     public setAsyncControlValidators(validators: ControlAsyncValidators[]): void {
-        this.asyncControlValidators = validators;
-        this.setAsyncValidators(this.customAsyncValidator.bind(this));
+        if (validators && validators.length) {
+            this.setAsyncValidators(validators.map(x => this.customAsyncValidator.bind(this, x)));
+        }
     }
 
-    private customAsyncValidator(control: AbstractControl): Observable<ValidationErrors> {
-        if (!this.asyncControlValidators || !this.asyncValidators) {
-            return null;
+    private customAsyncValidator(controlValidator: ControlAsyncValidators, control: AbstractControl) {
+        if (!this.asyncValidators) {
+            return of(null);
         }
 
-        const validators = this.asyncValidators.filter(x => this.asyncControlValidators.some(v => v.name === x.name));
-        const observables = validators.map(v => v.validate(control)).map(this.toObservable);
-        return forkJoin(observables).pipe(map(this._mergeErrors));
-    }
-
-    private toObservable(r: any): Observable<any> {
-        const obs = isPromise(r) ? from(r) : r;
-        if (!(isObservable(obs))) {
-            throw new Error(`Expected validator to return Promise or Observable.`);
+        const validator = this.asyncValidators.find(x => controlValidator.name === x.name);
+        if (!validator) {
+            return of(null);
         }
-        return obs;
-    }
 
-    private _mergeErrors(arrayOfErrors: ValidationErrors[]): ValidationErrors | null {
-        let res: {[key: string]: any} = {};
-
-        // Not using Array.reduce here due to a Chrome 80 bug
-        // https://bugs.chromium.org/p/chromium/issues/detail?id=1049982
-        arrayOfErrors.forEach((errors: ValidationErrors | null) => {
-            // tslint:disable-next-line:no-non-null-assertion
-            res = errors != null ? { ...res !, ...errors } : res!;
-        });
-
-        return Object.keys(res).length === 0 ? null : res;
+        return validator.validate(control);
     }
 }
