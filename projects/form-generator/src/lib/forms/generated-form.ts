@@ -1,4 +1,4 @@
-import { Inject, Injectable, Optional } from "@angular/core";
+import { EventEmitter, Inject, Injectable, Optional } from "@angular/core";
 import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors } from "@angular/forms";
 import { ControlAsyncValidators, ControlModel } from "../models/control.model";
 import { GroupModel } from "../models/group.model";
@@ -80,6 +80,11 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
         return group;
     }
 
+    public markAllAsTouched() {
+        super.markAllAsTouched();
+        (this.statusChanges as EventEmitter<string>).emit(this.status);
+    }
+
     private generateControls() {
         for (const control of this._models) {
             let formControl: AbstractControl;
@@ -153,6 +158,11 @@ export class GeneratedFormArray<T> extends FormArray implements GeneratedControl
         return (this.model.validationOption || { isOptional: false }).isOptional;
     }
 
+    public markAllAsTouched() {
+        super.markAllAsTouched();
+        (this.statusChanges as EventEmitter<string>).emit(this.status);
+    }
+
     private getControl(): AbstractControl {
         if (this.model.children) {
             const group = new GeneratedFormGroup();
@@ -202,6 +212,11 @@ export class GeneratedFormControl<T> extends FormControl implements GeneratedCon
         if (validators && validators.length) {
             this.setAsyncValidators(validators.map(x => this.customAsyncValidator.bind(this, x)));
         }
+    }
+
+    public markAllAsTouched() {
+        super.markAllAsTouched();
+        (this.statusChanges as EventEmitter<string>).emit(this.status);
     }
 
     private customAsyncValidator(controlValidator: ControlAsyncValidators, control: AbstractControl) {
