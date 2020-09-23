@@ -1,14 +1,12 @@
 import { EventEmitter, Inject, Injectable, Optional } from "@angular/core";
-import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors } from "@angular/forms";
+import { AbstractControl, FormArray, FormControl, FormGroup } from "@angular/forms";
+import { of } from "rxjs";
+import { ArrayModel } from "../models/array.model";
 import { ControlAsyncValidators, ControlModel } from "../models/control.model";
 import { GroupModel } from "../models/group.model";
-import { ArrayModel } from "../models/array.model";
-import { GeneratedControl } from "./generated-control";
-import { NGX_FORM_GENERATOR_ASYNC_VALIDATORS } from "../validators/constant";
 import { AsyncValidator } from "../validators/async.validator";
-import { forkJoin, from, isObservable, Observable, of } from "rxjs";
-import { isPromise } from "rxjs/internal-compatibility";
-import { map } from "rxjs/operators";
+import { NGX_FORM_GENERATOR_ASYNC_VALIDATORS } from "../validators/constant";
+import { GeneratedControl } from "./generated-control";
 
 @Injectable()
 export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl {
@@ -48,7 +46,7 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
     }
 
     public getRawValue(): T {
-        const rawValue = {} as T;
+        const rawValue = new this.config.instance();
 
         for (const key in this.controls) {
             if (!this.controls.hasOwnProperty(key)) {
@@ -166,7 +164,10 @@ export class GeneratedFormArray<T> extends FormArray implements GeneratedControl
     private getControl(): AbstractControl {
         if (this.model.children) {
             const group = new GeneratedFormGroup();
-            group.setConfig(this.model);
+            group.setConfig({
+                ...this.model,
+                instance: this.model.arrayType
+            });
             return group;
         }
 

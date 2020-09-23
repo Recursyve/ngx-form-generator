@@ -7,6 +7,7 @@ export function ngxFormGeneratorFactory(provider: any) {
     return (asyncValidators: AsyncValidator[]) => {
         const group = new GeneratedFormGroup(asyncValidators);
         group.setConfig({
+            instance: provider,
             children: NgxFormGeneratorScanner.getControls(provider)
         } as GroupModel);
         return group;

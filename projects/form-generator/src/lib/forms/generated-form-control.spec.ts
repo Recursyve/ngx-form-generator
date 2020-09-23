@@ -8,6 +8,7 @@ describe("GeneratedFormControl", () => {
 
     beforeEach(() => {
         textControl = new GeneratedFormControl({
+            formElementType: "control",
             type: "String",
             key: "text",
             name: "text",
@@ -15,6 +16,7 @@ describe("GeneratedFormControl", () => {
         });
 
         numberControl = new GeneratedFormControl({
+            formElementType: "control",
             type: "Number",
             key: "number",
             name: "number",
@@ -22,6 +24,7 @@ describe("GeneratedFormControl", () => {
         });
 
         dateControl = new GeneratedFormControl({
+            formElementType: "control",
             type: "Date",
             key: "date",
             name: "date",

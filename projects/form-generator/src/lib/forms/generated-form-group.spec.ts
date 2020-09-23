@@ -1,3 +1,6 @@
+import { ArrayModel } from "../models/array.model";
+import { ControlModel } from "../models/control.model";
+import { GroupModel } from "../models/group.model";
 import { GeneratedFormArray, GeneratedFormGroup } from "./generated-form";
 import { Validators } from "@angular/forms";
 
@@ -19,77 +22,93 @@ describe("GeneratedFormGroup", () => {
     let group: GeneratedFormGroup<Test>;
 
     beforeEach(() => {
-        group = new GeneratedFormGroup<Test>([
-            {
-                type: "String",
-                key: "text",
-                name: "text",
-                validators: [Validators.required]
-            },
-            {
-                type: "Number",
-                key: "number",
-                name: "number",
-                validators: [Validators.required]
-            },
-            {
-                type: "Date",
-                key: "date",
-                name: "date",
-                validators: [Validators.required]
-            },
-            {
-                type: "TestGroup",
-                key: "group",
-                name: "group",
-                children: [
-                    {
-                        type: "String",
-                        key: "text",
-                        name: "text",
-                        validators: [Validators.required]
-                    },
-                    {
-                        type: "Number",
-                        key: "number",
-                        name: "number",
-                        validators: [Validators.required]
-                    },
-                    {
-                        type: "Date",
-                        key: "date",
-                        name: "date",
-                        validators: [Validators.required]
-                    }
-                ]
-            },
-            {
-                type: "Array",
-                key: "array",
-                name: "array",
-                arrayType: TestGroup,
-                children: [
-                    {
-                        type: "String",
-                        key: "text",
-                        name: "text",
-                        validators: [Validators.required]
-                    },
-                    {
-                        type: "Number",
-                        key: "number",
-                        name: "number",
-                        validators: [Validators.required]
-                    },
-                    {
-                        type: "Date",
-                        key: "date",
-                        name: "date",
-                        validators: [Validators.required]
-                    }
-                ]
-            }
-        ]);
+        group = new GeneratedFormGroup<Test>();
+        group.setConfig({
+            instance: Test,
+            children: [
+                {
+                    formElementType: "control",
+                    type: "String",
+                    key: "text",
+                    name: "text",
+                    validators: [Validators.required],
+                } as ControlModel,
+                {
+                    formElementType: "control",
+                    type: "Number",
+                    key: "number",
+                    name: "number",
+                    validators: [Validators.required]
+                } as ControlModel,
+                {
+                    formElementType: "control",
+                    type: "Date",
+                    key: "date",
+                    name: "date",
+                    validators: [Validators.required]
+                } as ControlModel,
+                {
+                    instance: TestGroup,
+                    formElementType: "group",
+                    type: "TestGroup",
+                    key: "group",
+                    name: "group",
+                    children: [
+                        {
+                            formElementType: "control",
+                            type: "String",
+                            key: "text",
+                            name: "text",
+                            validators: [Validators.required]
+                        } as ControlModel,
+                        {
+                            formElementType: "control",
+                            type: "Number",
+                            key: "number",
+                            name: "number",
+                            validators: [Validators.required]
+                        } as ControlModel,
+                        {
+                            formElementType: "control",
+                            type: "Date",
+                            key: "date",
+                            name: "date",
+                            validators: [Validators.required]
+                        } as ControlModel
+                    ]
+                } as GroupModel,
+                {
+                    formElementType: "array",
+                    type: "Array",
+                    key: "array",
+                    name: "array",
+                    arrayType: TestGroup,
+                    children: [
+                        {
+                            formElementType: "control",
+                            type: "String",
+                            key: "text",
+                            name: "text",
+                            validators: [Validators.required]
+                        } as ControlModel,
+                        {
+                            formElementType: "control",
+                            type: "Number",
+                            key: "number",
+                            name: "number",
+                            validators: [Validators.required]
+                        } as ControlModel,
+                        {
+                            formElementType: "control",
+                            type: "Date",
+                            key: "date",
+                            name: "date",
+                            validators: [Validators.required]
+                        } as ControlModel
+                    ]
+                } as ArrayModel
+            ]
+        } as GroupModel);
     });
 
     it("group should have valid controls", () => {
@@ -127,20 +146,19 @@ describe("GeneratedFormGroup", () => {
             ]
         });
 
+        const rawValue = group.getRawValue();
+        expect(rawValue).toBeTruthy();
+
         expect(group.controls.text.getRawValue()).toEqual("TEST");
         expect(group.controls.number.getRawValue()).toEqual(0);
         expect(group.controls.date.getRawValue()).toEqual(new Date(Date.UTC(2019, 4, 28)));
-        expect(group.controls.group.getRawValue()).toEqual({
+
+        const testGroup = Object.assign(new TestGroup(), {
             text: "TEST",
             number: 0,
             date: new Date(Date.UTC(2019, 4, 28))
         });
-        expect(group.controls.array.getRawValue()).toEqual([
-            {
-                text: "TEST",
-                number: 0,
-                date: new Date(Date.UTC(2019, 4, 28))
-            }
-        ]);
+        expect(group.controls.group.getRawValue()).toEqual(testGroup);
+        expect(group.controls.array.getRawValue()).toEqual([testGroup]);
     });
 });

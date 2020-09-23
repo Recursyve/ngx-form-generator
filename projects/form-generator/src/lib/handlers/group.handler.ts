@@ -16,6 +16,7 @@ export class GroupHandler {
             }
             group = {
                 ...group,
+                instance: controlType,
                 name: config.name || propertyKey,
                 key: propertyKey,
                 formElementType: "group",

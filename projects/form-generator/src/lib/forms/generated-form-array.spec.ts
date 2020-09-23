@@ -15,24 +15,28 @@ describe("GeneratedFormArray", () => {
 
     beforeEach(() => {
         objectArray = new GeneratedFormArray<Test>({
+            formElementType: "array",
             type: "Array",
             key: "array",
             name: "array",
             arrayType: Test,
             children: [
                 {
+                    formElementType: "control",
                     type: "String",
                     key: "text",
                     name: "text",
                     validators: [Validators.required]
                 },
                 {
+                    formElementType: "control",
                     type: "Number",
                     key: "number",
                     name: "number",
                     validators: [Validators.required]
                 },
                 {
+                    formElementType: "control",
                     type: "Date",
                     key: "date",
                     name: "date",
@@ -41,6 +45,7 @@ describe("GeneratedFormArray", () => {
             ]
         });
         textArray = new GeneratedFormArray<string>({
+            formElementType: "array",
             type: "Array",
             key: "text",
             name: "text",
@@ -48,6 +53,7 @@ describe("GeneratedFormArray", () => {
             children: null
         });
         numberArray = new GeneratedFormArray<number>({
+            formElementType: "array",
             type: "Array",
             key: "number",
             name: "number",
@@ -55,6 +61,7 @@ describe("GeneratedFormArray", () => {
             children: null
         });
         dateArray = new GeneratedFormArray<Date>({
+            formElementType: "array",
             type: "Array",
             key: "date",
             name: "date",
@@ -93,13 +100,12 @@ describe("GeneratedFormArray", () => {
         numberArray.patchValue([0]);
         dateArray.patchValue([new Date(Date.UTC(2019, 4, 28))]);
 
-        expect(objectArray.getRawValue()).toEqual([
-            {
-                text: "TEST",
-                number: 0,
-                date: new Date(Date.UTC(2019, 4, 28))
-            }
-        ]);
+        const test = Object.assign(new Test(), {
+            text: "TEST",
+            number: 0,
+            date: new Date(Date.UTC(2019, 4, 28))
+        });
+        expect(objectArray.getRawValue()).toEqual([test]);
         expect(textArray.getRawValue()).toEqual(["TEST"]);
         expect(numberArray.getRawValue()).toEqual([0]);
         expect(dateArray.getRawValue()).toEqual([new Date(Date.UTC(2019, 4, 28))]);

@@ -3,6 +3,7 @@ import { ControlModel } from "./control.model";
 import { ValidationOptionModel } from "./validation-option.model";
 
 export interface GroupModel {
+    instance: any;
     name: string;
     key: string;
     type: string;
