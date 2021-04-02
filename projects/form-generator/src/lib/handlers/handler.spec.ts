@@ -28,6 +28,7 @@ class TestA {
 
 class TestB {
     @Group()
+    @Required()
     group1: TestA;
 
     @Group({
@@ -139,6 +140,7 @@ describe("Handler Tests", () => {
             expect(control.name).toBe("group1");
             expect(control.key).toBe("group1");
             expect(control.type).toBe("TestA");
+            expect(control.validators.length).toBe(1);
             expect(control.children).toBeDefined();
             expect(control.children.length).toBe(3);
         });

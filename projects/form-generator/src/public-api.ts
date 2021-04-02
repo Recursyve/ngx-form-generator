@@ -20,7 +20,7 @@ export class NgxFormGeneratorModule {
     public static forRoot(options: NgxFormGeneratorOptions = {}): ModuleWithProviders<NgxFormGeneratorModule> {
         return {
             ngModule: NgxFormGeneratorModule,
-            providers: options?.asyncValidators.map((provider) => {
+            providers: options?.asyncValidators?.map((provider) => {
                 const p = {
                     provide: NGX_FORM_GENERATOR_ASYNC_VALIDATORS,
                     multi: true
@@ -32,7 +32,12 @@ export class NgxFormGeneratorModule {
                     (p as ClassProvider).useClass = (provider as ClassProvider).useClass ?? provider as any;
                 }
                 return p;
-            })
+            }) ?? [
+                {
+                    provide: NGX_FORM_GENERATOR_ASYNC_VALIDATORS,
+                    useValue: []
+                }
+            ]
         };
     }
 

@@ -1,16 +1,19 @@
 {
     "name": "@recursyve/ngx-form-generator",
-    "version": "2.0.0-beta.16",
+    "version": "11.0.0-beta.16",
     "author": "Recursyve",
     "license": "MIT",
-    "homepage": "https://github.com/Recursyve/forms-frontend",
+    "homepage": "https://github.com/Recursyve/ngx-form-generator",
     "repository": {
         "type": "git",
-        "url": "https://github.com/Recursyve/forms-frontend.git"
+        "url": "https://github.com/Recursyve/ngx-form-generator.git"
+    },
+    "dependencies": {
+        "tslib": "^2.0.0"
     },
     "peerDependencies": {
-        "@angular/common": "^9.0.1",
-        "@angular/core": "^9.0.1",
-        "@angular/forms": "^9.0.1"
+        "@angular/common": "^11.0.0",
+        "@angular/core": "^11.0.0",
+        "@angular/forms": "^11.0.0"
     }
 }

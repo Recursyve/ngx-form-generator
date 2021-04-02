@@ -1,3 +1,4 @@
+import { ValidatorFn } from "@angular/forms";
 import { ArrayModel } from "./array.model";
 import { ControlModel } from "./control.model";
 import { ValidationOptionModel } from "./validation-option.model";
@@ -9,6 +10,7 @@ export interface GroupModel {
     type: string;
     formElementType: string;
     children: (ControlModel | GroupModel | ArrayModel)[];
+    validators?: ValidatorFn[];
     validationOption?: ValidationOptionModel;
     defaultValue?: any;
 }

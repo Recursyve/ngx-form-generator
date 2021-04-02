@@ -1,3 +1,5 @@
+export * from "./array-max-length.decorator";
+export * from "./array-min-length.decorator";
 export * from "./email.decorator";
 export * from "./ignore-zero.decorator";
 export * from "./matches-control.decorator";
@@ -8,4 +10,5 @@ export * from "./min.decorator";
 export * from "./min-length.decorator";
 export * from "./optional.decorator";
 export * from "./required.decorator";
+export * from "./required-true.decorator";
 export * from "./value-is.decorator";

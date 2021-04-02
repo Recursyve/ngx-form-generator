@@ -27,6 +27,7 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
     public setConfig(config: GroupModel) {
         this.config = config;
         this._models = config.children;
+        this.setValidators(config.validators);
         this.generateControls();
     }
 
@@ -104,7 +105,7 @@ export class GeneratedFormArray<T> extends FormArray implements GeneratedControl
     public controls: GeneratedControl[];
 
     constructor(private model: ArrayModel, private asyncValidators: AsyncValidator[] = []) {
-        super([]);
+        super(model.defaultValue ?? [], model.validators);
     }
 
     public push(value: unknown | T): void {

@@ -8,5 +8,5 @@ export function valueIs(expected: any): ValidatorFn {
         }
 
         return actual !== expected ? { valueIs: { actual, expected } } : null;
-    }
+    };
 }
