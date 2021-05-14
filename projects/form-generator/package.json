@@ -1,6 +1,6 @@
 {
     "name": "@recursyve/ngx-form-generator",
-    "version": "11.0.0-beta.16",
+    "version": "12.0.0-beta.17",
     "author": "Recursyve",
     "license": "MIT",
     "homepage": "https://github.com/Recursyve/ngx-form-generator",
@@ -12,8 +12,8 @@
         "tslib": "^2.0.0"
     },
     "peerDependencies": {
-        "@angular/common": "^11.0.0",
-        "@angular/core": "^11.0.0",
-        "@angular/forms": "^11.0.0"
+        "@angular/common": "^12.0.0",
+        "@angular/core": "^12.0.0",
+        "@angular/forms": "^12.0.0"
     }
 }
