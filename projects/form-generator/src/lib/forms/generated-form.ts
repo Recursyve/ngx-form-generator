@@ -194,6 +194,12 @@ export class GeneratedFormControl<T> extends FormControl implements GeneratedCon
                 }
 
                 return +this.value as any;
+            case "String":
+                if (this.model.validationOption && this.model.validationOption.ignoreEmpty && this.value === "") {
+                    return;
+                }
+
+                return this.value;
             default:
                 return this.value;
         }

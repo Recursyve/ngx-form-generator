@@ -43,4 +43,15 @@ export class ValidatorsHandler {
             ControlHandler.saveControl(control, target, propertyKey);
         };
     }
+
+    public static ignoreEmpty() {
+        return (target: object, propertyKey: string) => {
+            const control: ControlModel = ControlHandler.getControl(target, propertyKey);
+            control.validationOption = {
+                ...(control.validationOption || {}),
+                ignoreEmpty: true
+            };
+            ControlHandler.saveControl(control, target, propertyKey);
+        };
+    }
 }
