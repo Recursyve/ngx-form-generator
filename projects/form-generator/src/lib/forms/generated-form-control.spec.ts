@@ -56,5 +56,8 @@ describe("GeneratedFormControl", () => {
         expect(textControl.getRawValue()).toEqual("TEST");
         expect(numberControl.getRawValue()).toEqual(0);
         expect((dateControl.getRawValue() as Date)).toEqual(new Date(Date.UTC(2019, 4, 28)));
+
+        numberControl.patchValue(null);
+        expect(numberControl.getRawValue()).toEqual(null);
     });
 });

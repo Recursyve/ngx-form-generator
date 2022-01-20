@@ -189,6 +189,10 @@ export class GeneratedFormControl<T> extends FormControl implements GeneratedCon
     public getRawValue(): T {
         switch (this.model.type) {
             case "Number":
+                if (this.value === null || this.value === undefined) {
+                    return this.value;
+                }
+
                 if (this.model.validationOption && this.model.validationOption.ignoreZero && +this.value === 0) {
                     return;
                 }
