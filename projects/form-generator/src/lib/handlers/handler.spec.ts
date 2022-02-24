@@ -1,5 +1,5 @@
 import { CONTROLS } from "../constant";
-import { Control, Group } from "../decorators/controls";
+import { Array, Control, Group } from "../decorators/controls";
 import {
     Email,
     MatchesControl,
@@ -91,6 +91,10 @@ class TestC {
     @Control()
     @ValueIs(true)
     valueIs: boolean;
+
+    @Array(Number)
+    @Required()
+    reqArr: boolean[];
 }
 
 describe("Handler Tests", () => {
@@ -183,6 +187,13 @@ describe("Handler Tests", () => {
             expect(control).toBeDefined();
             expect(control.validators).toBeDefined();
             expect(control.validators.length).toBe(8);
+        });
+
+        it("TestC reqArr Metadata should contains one validators", () => {
+            const control = ControlHandler.getControl(TestC.prototype, "reqArr");
+            expect(control).toBeDefined();
+            expect(control.validators).toBeDefined();
+            expect(control.validators.length).toBe(1);
         });
     });
 });

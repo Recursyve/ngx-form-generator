@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import { AsyncValidatorFn, ValidatorFn } from "@angular/forms";
+import { ValidatorFn } from "@angular/forms";
 import { ControlAsyncValidators, ControlModel } from "../models/control.model";
 import { validationWrapper } from "../validators/validator-wrapper";
 import { ControlHandler } from "./control.handler";

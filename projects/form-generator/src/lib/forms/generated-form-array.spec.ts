@@ -12,6 +12,7 @@ describe("GeneratedFormArray", () => {
     let textArray: GeneratedFormArray<string>;
     let numberArray: GeneratedFormArray<number>;
     let dateArray: GeneratedFormArray<Date>;
+    let reqArray: GeneratedFormArray<number>;
 
     beforeEach(() => {
         objectArray = new GeneratedFormArray<Test>({
@@ -68,6 +69,15 @@ describe("GeneratedFormArray", () => {
             arrayType: Date,
             children: null
         });
+        reqArray = new GeneratedFormArray<number>({
+            formElementType: "array",
+            type: "Array",
+            key: "req",
+            name: "req",
+            arrayType: Number,
+            children: null,
+            validators: [Validators.required]
+        });
     });
 
     it("patchValue should create missing controls", () => {
@@ -109,5 +119,9 @@ describe("GeneratedFormArray", () => {
         expect(textArray.getRawValue()).toEqual(["TEST"]);
         expect(numberArray.getRawValue()).toEqual([0]);
         expect(dateArray.getRawValue()).toEqual([new Date(Date.UTC(2019, 4, 28))]);
+    });
+
+    it("required array should not be a valid array", () => {
+        expect(reqArray.invalid).toBe(true);
     });
 });

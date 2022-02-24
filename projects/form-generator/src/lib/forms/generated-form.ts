@@ -42,8 +42,10 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
             }
 
             const model = this._models.find(x => x.name === key);
-            this.controls[key].patchValue(value[model.key], options);
+            this.controls[key].patchValue(value[model.key], { onlySelf: true, emitEvent: options.emitEvent });
         }
+
+        this.updateValueAndValidity(options);
     }
 
     public getRawValue(): T {
@@ -138,9 +140,11 @@ export class GeneratedFormArray<T> extends FormArray implements GeneratedControl
             if (i >= this.controls.length) {
                 this.push(null);
             }
-            this.at(i).patchValue(data, options);
+            this.at(i).patchValue(data, { onlySelf: true, emitEvent: options.emitEvent });
             ++i;
         }
+
+        this.updateValueAndValidity(options);
     }
 
     public getRawValue(): T[] {
