@@ -64,6 +64,22 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
         return rawValue;
     }
 
+    public getValidValue(): T {
+        const validValue = new this.config.instance();
+
+        for (const key in this.controls) {
+            if (!this.controls.hasOwnProperty(key)) {
+                continue;
+            }
+
+            const control = this.controls[key];
+            const model = this._models.find(x => x.name === key);
+            validValue[model.key] = control.getValidValue();
+        }
+
+        return validValue;
+    }
+
     public shouldValidate(): boolean {
         let parentValidation = true;
         if (this.parent) {
@@ -151,6 +167,10 @@ export class GeneratedFormArray<T> extends FormArray implements GeneratedControl
         return this.controls.map(x => x.getRawValue());
     }
 
+    public getValidValue(): T[] {
+        return this.controls.map(x => x.getValidValue());
+    }
+
     public shouldValidate(): boolean {
         if (this.parent) {
             return (this.parent as any as GeneratedControl).shouldValidate();
@@ -211,6 +231,14 @@ export class GeneratedFormControl<T> extends FormControl implements GeneratedCon
             default:
                 return this.value;
         }
+    }
+
+    public getValidValue(): T {
+        if (this.invalid) {
+            return undefined;
+        }
+
+        return this.getRawValue();
     }
 
     public shouldValidate(): boolean {
