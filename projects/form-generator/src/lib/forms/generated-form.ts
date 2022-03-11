@@ -31,7 +31,7 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
         this.generateControls();
     }
 
-    public patchValue(value: T, options?: { onlySelf?: boolean; emitEvent?: boolean }): void {
+    public patchValue(value: T, options: { onlySelf?: boolean; emitEvent?: boolean } = {}): void {
         if (!value) {
             return;
         }
@@ -130,7 +130,7 @@ export class GeneratedFormArray<T> extends FormArray implements GeneratedControl
         return super.at(index) as GeneratedControl;
     }
 
-    public patchValue(value: T[], options?: { onlySelf?: boolean; emitEvent?: boolean }): void {
+    public patchValue(value: T[], options: { onlySelf?: boolean; emitEvent?: boolean } = {}): void {
         if (!value) {
             return;
         }

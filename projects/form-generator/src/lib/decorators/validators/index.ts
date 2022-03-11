@@ -1,5 +1,6 @@
 export * from "./array-max-length.decorator";
 export * from "./array-min-length.decorator";
+export * from "./custom-pattern.decorator";
 export * from "./email.decorator";
 export * from "./ignore-empty.decorator";
 export * from "./ignore-zero.decorator";
