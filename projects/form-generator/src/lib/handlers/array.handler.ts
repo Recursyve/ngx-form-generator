@@ -19,6 +19,8 @@ export class ArrayHandler {
                 formElementType: "array",
                 type: "Array",
                 validators: array?.validators ?? [],
+                disabled: array?.disabled,
+                defaultValue: array?.defaultValue,
                 arrayType: type,
                 children: children ? children.map(x => Reflect.getMetadata(CONTROL.replace("{name}", x), type.prototype)) : null
             };

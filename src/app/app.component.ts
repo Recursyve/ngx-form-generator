@@ -1,24 +1,25 @@
 import { Component } from "@angular/core";
-import { GeneratedFormGroup, NgxFormGeneratorProvider } from "@recursyve/ngx-form-generator";
-import { TestDto } from "./dto/test.dto";
+import { GeneratedFormGroup, NgxFormGeneratorProvider } from "../../projects/form-generator/src/public-api";
+import { TestForm } from "./form/test.form";
 
 @Component({
     selector: "app-root",
     templateUrl: "./app.template.html",
     providers: [
-        ...NgxFormGeneratorProvider.forFeature([TestDto])
+        ...NgxFormGeneratorProvider.forFeature([TestForm])
     ]
 })
 export class AppComponent {
-    public values: TestDto;
+    public values: TestForm;
     public valid: any;
 
-    constructor(public formGroup: GeneratedFormGroup<TestDto>) {
+    constructor(public formGroup: GeneratedFormGroup<TestForm>) {
     }
 
     public setValues() {
         this.formGroup.patchValue({
             test: "Hello world",
+            disabledControl: "This should be disabled",
             group: {
                 test: "Hello world!"
             }

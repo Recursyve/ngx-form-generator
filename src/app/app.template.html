@@ -5,6 +5,12 @@
         {{ formGroup.controls.test.dirty }}
         {{ formGroup.errors | json }}
     </label>
+
+    <label>
+        Disabled:
+        <input formControlName="disabledControl">
+    </label>
+
     <h5>Group</h5>
     <div formGroupName="group">
         <label>

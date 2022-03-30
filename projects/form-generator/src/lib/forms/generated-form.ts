@@ -29,6 +29,10 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
         this._models = config.children;
         this.setValidators(config.validators);
         this.generateControls();
+
+        if (this.config.disabled) {
+            this.disable({ emitEvent: false });
+        }
     }
 
     public patchValue(value: T, options: { onlySelf?: boolean; emitEvent?: boolean } = {}): void {
@@ -124,6 +128,10 @@ export class GeneratedFormArray<T> extends FormArray implements GeneratedControl
 
     constructor(private model: ArrayModel, private asyncValidators: AsyncValidator[] = []) {
         super(model.defaultValue ?? [], model.validators);
+
+        if (model.disabled) {
+            this.disable({ emitEvent: false });
+        }
     }
 
     public push(value: unknown | T): void {
@@ -207,7 +215,10 @@ export class GeneratedFormArray<T> extends FormArray implements GeneratedControl
 
 export class GeneratedFormControl<T> extends FormControl implements GeneratedControl {
     constructor(private model: ControlModel, private asyncValidators: AsyncValidator[] = []) {
-        super(model.defaultValue, model.validators);
+        super({ value: model.defaultValue, disabled: model.disabled }, {
+            validators: model.validators,
+            updateOn: model.updateOn
+        });
     }
 
     public getRawValue(): T {

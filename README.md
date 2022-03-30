@@ -15,7 +15,7 @@ NgxFormGenerator will generate an implementation of FormGroup for you. We use de
 ```typescript
 import { Control } from "@recursyve/ngx-form-generator"
 
-class TestDto {
+class TestForm {
     @Control()
     example: string;
     
@@ -42,7 +42,7 @@ If you want to use validators on your controls, you can add them on top of each 
 ```typescript
 import { Control, Required } from "@recursyve/ngx-form-generator"
 
-class TestDto {
+class TestForm {
     @Control()
     @Required()
     example: string;
@@ -57,7 +57,7 @@ class TestDto {
 }
 ```
 
-The next step is load TestDto in your module
+The next step is load TestForm in your module
 
 ```typescript
 @Module({
@@ -66,7 +66,7 @@ The next step is load TestDto in your module
         NgxFormGeneratorModule.forFeature([
             {
                 provide: "Test",
-                useValue: TestDto
+                useValue: TestForm
             }
         ]),
     ]
@@ -83,7 +83,7 @@ You can now load your generated FormGroup in your component
     templateUrl: "app.template.html"
 })
 class AppCompnent {
-    constructor(@Inject("Test") public formGroup: GeneratedFormGroup<TestDto>) {}
+    constructor(@Inject("Test") public formGroup: GeneratedFormGroup<TestForm>) {}
 }
 ```
 
@@ -93,10 +93,10 @@ You can also provide your Dto directly in the components
 @Component({
     selector: "app-root",
     templateUrl: "app.template.html",
-    providers: NgxFormGeneratorProvider.forFeature([TestDto)]
+    providers: NgxFormGeneratorProvider.forFeature([TestForm)]
 })
 class AppCompnent {
-    constructor(public formGroup: GeneratedFormGroup<TestDto>) {}
+    constructor(public formGroup: GeneratedFormGroup<TestForm>) {}
 }
 ```
 

@@ -14,9 +14,13 @@ export interface ControlModel {
     validators?: ValidatorFn[];
     asyncValidators?: ControlAsyncValidators[];
     validationOption?: ValidationOptionModel;
+    updateOn?: "change" | "blur" | "submit";
+    disabled?: boolean;
 }
 
 export interface ControlConfigModel {
     name?: string;
     defaultValue?: any;
+    updateOn?: "change" | "blur" | "submit";
+    disabled?: boolean;
 }

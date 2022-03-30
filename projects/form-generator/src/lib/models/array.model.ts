@@ -13,4 +13,5 @@ export interface ArrayModel {
     validators?: ValidatorFn[];
     validationOption?: ValidationOptionModel;
     defaultValue?: any;
+    disabled?: boolean;
 }

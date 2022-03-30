@@ -13,9 +13,11 @@ export interface GroupModel {
     validators?: ValidatorFn[];
     validationOption?: ValidationOptionModel;
     defaultValue?: any;
+    disabled?: boolean;
 }
 
 export interface GroupConfigModel {
     name?: string;
     defaultValue?: any;
+    disabled?: boolean;
 }

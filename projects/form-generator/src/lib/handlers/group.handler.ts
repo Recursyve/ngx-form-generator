@@ -21,6 +21,7 @@ export class GroupHandler {
                 key: propertyKey,
                 formElementType: "group",
                 type: controlType.name,
+                disabled: config.disabled ?? group?.disabled,
                 defaultValue: config.defaultValue,
                 children: children.map(x => Reflect.getMetadata(CONTROL.replace("{name}", x), controlType.prototype))
             };

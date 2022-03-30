@@ -13,7 +13,9 @@ export class ControlHandler {
                 name: config.name || propertyKey,
                 key: propertyKey,
                 type: controlType.name,
-                defaultValue: config.defaultValue
+                defaultValue: config.defaultValue,
+                updateOn: config.updateOn ?? control.updateOn,
+                disabled: config.disabled ?? control.disabled
             };
             this.saveControl(control, target, propertyKey);
         };
