@@ -7,6 +7,7 @@ import { GroupModel } from "../models/group.model";
 import { AsyncValidator } from "../validators/async.validator";
 import { NGX_FORM_GENERATOR_ASYNC_VALIDATORS } from "../validators/constant";
 import { GeneratedControl } from "./generated-control";
+import { ValueUtils } from "../utils/value.utils";
 
 @Injectable()
 export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl {
@@ -215,7 +216,7 @@ export class GeneratedFormArray<T> extends FormArray implements GeneratedControl
 
 export class GeneratedFormControl<T> extends FormControl implements GeneratedControl {
     constructor(private model: ControlModel, private asyncValidators: AsyncValidator[] = []) {
-        super({ value: model.defaultValue, disabled: model.disabled }, {
+        super({ value: ValueUtils.useOrComputeValue(model.defaultValue), disabled: model.disabled }, {
             validators: model.validators,
             updateOn: model.updateOn
         });

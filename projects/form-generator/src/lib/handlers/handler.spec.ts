@@ -24,6 +24,9 @@ class TestA {
 
     @Control({ name: "date" })
     control3: Date;
+
+    @Control({ defaultValue: () => 10 })
+    control4: number;
 }
 
 class TestB {
@@ -35,7 +38,8 @@ class TestB {
         defaultValue: {
             control1: "test",
             control2: 20,
-            control3: null
+            control3: null,
+            control4: () => 20
         }
     })
     group2: TestA;
@@ -99,10 +103,10 @@ class TestC {
 
 describe("Handler Tests", () => {
     describe("Control", () => {
-        it("TestA Metadata should contain three controls", () => {
+        it("TestA Metadata should contain four controls", () => {
             const controls: ControlModel[] = Reflect.getMetadata(CONTROLS, TestA.prototype);
             expect(controls).toBeDefined();
-            expect(controls.length).toBe(3);
+            expect(controls.length).toBe(4);
         });
 
         it("TestA control1 Metadata should be valid", () => {
@@ -129,13 +133,23 @@ describe("Handler Tests", () => {
             expect(control.key).toBe("control3");
             expect(control.type).toBe("Date");
         });
+
+        it ("TestA control4 Metadata should be valid", () => {
+            const control = ControlHandler.getControl(TestA.prototype, "control4");
+            expect(control).toBeDefined();
+            expect(control.name).toBe("control4");
+            expect(control.key).toBe("control4");
+            expect(control.type).toBe("Number");
+            expect(typeof control.defaultValue).toBe("function");
+            expect(control.defaultValue()).toBe(10);
+        });
     });
 
     describe("Group", () => {
-        it("TestB Metadata should contain three controls", () => {
+        it("TestB Metadata should contain four controls", () => {
             const controls: ControlModel[] = Reflect.getMetadata(CONTROLS, TestB.prototype);
             expect(controls).toBeDefined();
-            expect(controls.length).toBe(3);
+            expect(controls.length).toBe(4);
         });
 
         it("TestB group1 Metadata should be valid", () => {
@@ -146,7 +160,7 @@ describe("Handler Tests", () => {
             expect(control.type).toBe("TestA");
             expect(control.validators.length).toBe(1);
             expect(control.children).toBeDefined();
-            expect(control.children.length).toBe(3);
+            expect(control.children.length).toBe(4);
         });
 
         it("TestB control2 Metadata should be valid", () => {
@@ -156,7 +170,7 @@ describe("Handler Tests", () => {
             expect(control.key).toBe("group2");
             expect(control.type).toBe("TestA");
             expect(control.children).toBeDefined();
-            expect(control.children.length).toBe(3);
+            expect(control.children.length).toBe(4);
             expect(control.defaultValue).toEqual({
                 control1: "test",
                 control2: 20,
@@ -171,7 +185,23 @@ describe("Handler Tests", () => {
             expect(control.key).toBe("group3");
             expect(control.type).toBe("TestA");
             expect(control.children).toBeDefined();
-            expect(control.children.length).toBe(3);
+            expect(control.children.length).toBe(4);
+        });
+
+        it("TestB control4 Metadata should be valid", () => {
+            const control = ControlHandler.getControl(TestB.prototype, "group2") as GroupModel;
+            expect(control).toBeDefined();
+            expect(control.name).toBe("group2");
+            expect(control.key).toBe("group2");
+            expect(control.type).toBe("TestA");
+            expect(control.children).toBeDefined();
+            expect(control.children.length).toBe(4);
+            expect(control.defaultValue).toEqual({
+                control1: "test",
+                control2: 20,
+                control3: null,
+                control4: () => 20
+            });
         });
     });
 
