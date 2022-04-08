@@ -5,6 +5,8 @@ describe("GeneratedFormControl", () => {
     let textControl: GeneratedFormControl<string>;
     let numberControl: GeneratedFormControl<number>;
     let dateControl: GeneratedFormControl<Date>;
+    let defaultValueControl: GeneratedFormControl<string>;
+    let defaultFunctionalValueControl: GeneratedFormControl<string>;
 
     beforeEach(() => {
         textControl = new GeneratedFormControl({
@@ -30,6 +32,22 @@ describe("GeneratedFormControl", () => {
             name: "date",
             validators: [Validators.required]
         });
+
+        defaultValueControl = new GeneratedFormControl({
+            formElementType: "control",
+            type: "String",
+            key: "text",
+            name: "text",
+            defaultValue: "default_value"
+        });
+
+        defaultFunctionalValueControl = new GeneratedFormControl({
+            formElementType: "control",
+            type: "String",
+            key: "text",
+            name: "text",
+            defaultValue: () => "default_value"
+        });
     });
 
     it("Controls should be in invalid state by default", () => {
@@ -46,6 +64,8 @@ describe("GeneratedFormControl", () => {
         expect(textControl.valid).toBeTruthy();
         expect(numberControl.valid).toBeTruthy();
         expect(dateControl.valid).toBeTruthy();
+        expect(defaultValueControl.valid).toBeTruthy();
+        expect(defaultFunctionalValueControl.valid).toBeTruthy();
     });
 
     it("getRawValue should returns value in the good format", () => {
@@ -56,6 +76,8 @@ describe("GeneratedFormControl", () => {
         expect(textControl.getRawValue()).toEqual("TEST");
         expect(numberControl.getRawValue()).toEqual(0);
         expect((dateControl.getRawValue() as Date)).toEqual(new Date(Date.UTC(2019, 4, 28)));
+        expect(defaultValueControl.getRawValue()).toEqual("default_value");
+        expect(defaultFunctionalValueControl.getRawValue()).toEqual("default_value");
 
         numberControl.patchValue(null);
         expect(numberControl.getRawValue()).toEqual(null);
