@@ -10,7 +10,6 @@ export * from "./max.decorator";
 export * from "./max-length.decorator";
 export * from "./min.decorator";
 export * from "./min-length.decorator";
-export * from "./optional.decorator";
 export * from "./required.decorator";
 export * from "./required-true.decorator";
 export * from "./value-is.decorator";

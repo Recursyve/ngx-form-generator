@@ -1,6 +1,6 @@
 # NgxFormGenerator
 
-NgxFormGenerator is an Angular ReactiveForms helper that will makes your form cleaner and safer.
+NgxFormGenerator is an Angular ReactiveForms helper that will make your form cleaner and safer.
 
 ## Installation
 
@@ -37,7 +37,7 @@ const group = builder.group({
 });
 ```
 
-If you want to use validators on your controls, you can add them on top of each properties
+If you want to use validators on your controls, you can add them on top of each property
 
 ```typescript
 import { Control, Required } from "@recursyve/ngx-form-generator"
@@ -87,17 +87,17 @@ class AppCompnent {
 }
 ```
 
-You can also provide your Dto directly in the components
+You can also provide your form directly in the components
 
 ```typescript
 @Component({
     selector: "app-root",
     templateUrl: "app.template.html",
-    providers: NgxFormGeneratorProvider.forFeature([TestForm)]
+    providers: NgxFormGeneratorProvider.forFeature([TestForm])
 })
 class AppCompnent {
     constructor(public formGroup: GeneratedFormGroup<TestForm>) {}
 }
 ```
 
-GeneratedFormGroup is an implementation of FormGroup. Everything that you used to do with a FormGroup will still works.
+GeneratedFormGroup is an implementation of FormGroup. Everything that you used to do with a FormGroup will still work.
