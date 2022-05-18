@@ -1,9 +1,10 @@
 import { AbstractControl } from "@angular/forms";
 import { ValidatorConditionFn } from "../models/validation-option.model";
 
-export function validateIf(condition: (value) => boolean, { root } = { root: false }): ValidatorConditionFn {
+export function validateIf(
+    condition: ({ value, parent, control }: { value: any; parent?: any; control?: AbstractControl }) => boolean
+): ValidatorConditionFn {
     return (control: AbstractControl): boolean => {
-        const value = root ? control.root.value : control.parent.value;
-        return condition(value);
+        return condition({ value: control.value, parent: control.parent.value, control });
     };
 }

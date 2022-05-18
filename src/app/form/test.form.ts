@@ -1,12 +1,5 @@
 import { Validators } from "@angular/forms";
-import { Disabled } from "../../../projects/form-generator/src/lib/decorators/controls/disabled.decorator";
-import {
-    AddValidatorIf
-} from "../../../projects/form-generator/src/lib/decorators/validators/add-validator-if.decorator";
-import {
-    RemoveValidatorIf
-} from "../../../projects/form-generator/src/lib/decorators/validators/remove-validator-if.decorator";
-import { Control, Group, MaxLength, Required } from "../../../projects/form-generator/src/public-api";
+import { AddValidatorIf, Control, Disabled, Group, MaxLength, RemoveValidatorIf, Required } from "../../../projects/form-generator/src/public-api";
 import { AsyncValidation } from "../validators/async.validator";
 
 export class GroupTestForm {
