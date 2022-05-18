@@ -16,6 +16,23 @@
         <label>
             Test in group:
             <input formControlName="test">
+            {{ formGroup.get("group.test").errors | json }}
+        </label>
+
+        <br>
+
+        <label>
+            Test2 in group:
+            <input formControlName="test2">
+            {{ formGroup.get("group.test2").errors | json }}
+        </label>
+
+        <br>
+
+        <label>
+            Test3 in group:
+            <input formControlName="test3">
+            {{ formGroup.get("group.test3").errors | json }}
         </label>
     </div>
 

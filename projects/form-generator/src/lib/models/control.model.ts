@@ -1,5 +1,5 @@
 import { ValidatorFn } from "@angular/forms";
-import { ValidationOptionModel } from "./validation-option.model";
+import { DynamicValidators, ValidationOptionModel, ValidatorConditionFn } from "./validation-option.model";
 
 export interface ControlAsyncValidators {
     name: string;
@@ -11,8 +11,10 @@ export interface ControlModel {
     type: string;
     formElementType: string;
     defaultValue?: any;
+    condition?: ValidatorConditionFn;
     validators?: ValidatorFn[];
     asyncValidators?: ControlAsyncValidators[];
+    dynamicValidators?: DynamicValidators[];
     validationOption?: ValidationOptionModel;
     updateOn?: "change" | "blur" | "submit";
     disabled?: boolean;

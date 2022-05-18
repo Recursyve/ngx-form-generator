@@ -1,3 +1,4 @@
+export * from "./add-validator-if.decorator";
 export * from "./array-max-length.decorator";
 export * from "./array-min-length.decorator";
 export * from "./custom-pattern.decorator";
@@ -10,7 +11,8 @@ export * from "./max.decorator";
 export * from "./max-length.decorator";
 export * from "./min.decorator";
 export * from "./min-length.decorator";
-export * from "./optional.decorator";
+export * from "./remove-validator-if.decorator";
 export * from "./required.decorator";
 export * from "./required-true.decorator";
+export * from "./validate-if.decorator";
 export * from "./value-is.decorator";

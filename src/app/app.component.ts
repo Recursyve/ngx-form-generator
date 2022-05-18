@@ -21,7 +21,9 @@ export class AppComponent {
             test: "Hello world",
             disabledControl: "This should be disabled",
             group: {
-                test: "Hello world!"
+                test: "Hello world!",
+                test2: null,
+                test3: null
             }
         });
     }
