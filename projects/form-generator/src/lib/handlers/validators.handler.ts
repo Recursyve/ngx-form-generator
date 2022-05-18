@@ -38,17 +38,6 @@ export class ValidatorsHandler {
         };
     }
 
-    public static isOptional() {
-        return (target: object, propertyKey: string) => {
-            const control: ControlModel = ControlHandler.getControl(target, propertyKey);
-            control.validationOption = {
-                ...(control.validationOption || {}),
-                isOptional: true
-            };
-            ControlHandler.saveControl(control, target, propertyKey);
-        };
-    }
-
     public static ignoreZero() {
         return (target: object, propertyKey: string) => {
             const control: ControlModel = ControlHandler.getControl(target, propertyKey);

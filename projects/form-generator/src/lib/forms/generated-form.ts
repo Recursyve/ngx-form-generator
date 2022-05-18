@@ -1,13 +1,13 @@
 import { EventEmitter, Inject, Injectable, Optional } from "@angular/core";
 import { AbstractControl, FormArray, FormControl, FormGroup, ValidatorFn } from "@angular/forms";
-import { from, of } from "rxjs";
+import { of } from "rxjs";
 import { ArrayModel } from "../models/array.model";
 import { ControlAsyncValidators, ControlModel } from "../models/control.model";
 import { GroupModel } from "../models/group.model";
+import { ValueUtils } from "../utils/value.utils";
 import { AsyncValidator } from "../validators/async.validator";
 import { NGX_FORM_GENERATOR_ASYNC_VALIDATORS } from "../validators/constant";
 import { GeneratedControl } from "./generated-control";
-import { ValueUtils } from "../utils/value.utils";
 
 @Injectable()
 export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl {
@@ -83,17 +83,6 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
         }
 
         return validValue;
-    }
-
-    public shouldValidate(): boolean {
-        let parentValidation = true;
-        if (this.parent) {
-            parentValidation = (this.parent as any as GeneratedControl).shouldValidate();
-        }
-        if (!this.config) {
-            return true;
-        }
-        return (this.config.validationOption || { isOptional: false }).isOptional ? false : parentValidation;
     }
 
     public copy(): GeneratedFormGroup<T> {
@@ -180,21 +169,10 @@ export class GeneratedFormArray<T> extends FormArray implements GeneratedControl
         return this.controls.map(x => x.getValidValue());
     }
 
-    public shouldValidate(): boolean {
-        if (this.parent) {
-            return (this.parent as any as GeneratedControl).shouldValidate();
-        }
-        if (!this.model) {
-            return true;
-        }
-        return (this.model.validationOption || { isOptional: false }).isOptional;
-    }
-
     public markAllAsTouched() {
         super.markAllAsTouched();
         (this.statusChanges as EventEmitter<string>).emit(this.status);
     }
-
 
     private getControl(): AbstractControl {
         if (this.model.children) {
@@ -252,17 +230,6 @@ export class GeneratedFormControl<T> extends FormControl implements GeneratedCon
         }
 
         return this.getRawValue();
-    }
-
-    public shouldValidate(): boolean {
-        if (this.parent) {
-            return (this.parent as any as GeneratedControl).shouldValidate();
-        }
-
-        if (!this.model) {
-            return true;
-        }
-        return !(this.model.validationOption || { isOptional: false }).isOptional;
     }
 
     public setAsyncControlValidators(validators: ControlAsyncValidators[]): void {
