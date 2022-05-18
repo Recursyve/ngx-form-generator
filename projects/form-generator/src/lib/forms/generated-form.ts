@@ -295,13 +295,16 @@ export class GeneratedFormControl<T> extends FormControl implements GeneratedCon
     }
 
     private checkDynamicValidators(): boolean {
-        if (!this.model) {
+        if (!this.model?.dynamicValidators?.length) {
             return;
         }
 
+        // Use the internal function of implemented by FormGroup.
+        const parent = (this.parent as any)?._reduceValue();
+
         let shouldRevalidate = false;
         for (const validator of this.model.dynamicValidators) {
-            const success = validator.condition({ value: this.value, parent: this.parent?.value, control: this });
+            const success = validator.condition({ value: this.value, parent, control: this });
 
             if ((success && validator.action === "add") || (!success && validator.action === "remove")) {
                 for (const fn of validator.validators) {
