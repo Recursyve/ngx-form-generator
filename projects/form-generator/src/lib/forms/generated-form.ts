@@ -176,7 +176,7 @@ export class GeneratedFormArray<T> extends FormArray implements GeneratedControl
 
     private getControl(): AbstractControl {
         if (this.model.children) {
-            const group = new GeneratedFormGroup();
+            const group = new GeneratedFormGroup(this.asyncValidators);
             group.setConfig({
                 ...this.model,
                 instance: this.model.arrayType
