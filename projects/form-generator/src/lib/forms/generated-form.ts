@@ -250,6 +250,10 @@ export class GeneratedFormControl<T> extends FormControl implements GeneratedCon
         return super.validator;
     }
 
+    public set validator(validatorFn: ValidatorFn | null) {
+        super.validator = validatorFn;
+    }
+
     public updateValueAndValidity(opts?: { onlySelf?: boolean; emitEvent?: boolean, depth?: number }) {
         const depth = opts?.depth ?? 1;
         if (depth <= 1) {
