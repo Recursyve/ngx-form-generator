@@ -1,6 +1,6 @@
 import { EventEmitter, Inject, Injectable, Optional } from "@angular/core";
 import { AbstractControl, FormArray, FormControl, FormGroup, ValidatorFn } from "@angular/forms";
-import { of } from "rxjs";
+import { map, merge, Observable, of, Subscription } from "rxjs";
 import { ArrayModel } from "../models/array.model";
 import { ControlAsyncValidators, ControlModel } from "../models/control.model";
 import { GroupModel } from "../models/group.model";
@@ -114,10 +114,15 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
 }
 
 export class GeneratedFormArray<T> extends FormArray implements GeneratedControl {
+    private controlValueChanges$: Observable<[T, number]>;
+    private controlValueChangesSub: Subscription;
+
     public controls: GeneratedControl[];
 
+    public childValueChanges: EventEmitter<[T, number]> = new EventEmitter<[T, number]>();
+
     constructor(public readonly model: ArrayModel, private asyncValidators: AsyncValidator[] = []) {
-        super(model.defaultValue ?? [], model.validators);
+        super(model.defaultValue ?? [], [...model.validators ?? []]);
 
         if (model.disabled) {
             this.disable({ emitEvent: false });
@@ -126,22 +131,29 @@ export class GeneratedFormArray<T> extends FormArray implements GeneratedControl
 
     public push(value: unknown | T, options?: { emitEvent?: boolean; }): void {
         const control = this.getControl();
+        super.push(control, options);
+        this.generateControlValueChanges();
         if (value) {
             control.patchValue(value, options);
         }
-        super.push(control, options);
     }
 
     public insert(index: number, value: unknown | T, options?: { emitEvent?: boolean; }): void {
         const control = this.getControl();
+        super.insert(index, control, options);
+        this.generateControlValueChanges();
         if (value) {
             control.patchValue(value, options);
         }
-        super.insert(index, control, options);
     }
 
     public at(index: number): GeneratedControl {
         return super.at(index) as GeneratedControl;
+    }
+
+    public removeAt(index: number, options?: { emitEvent?: boolean }) {
+        super.removeAt(index, options);
+        this.generateControlValueChanges();
     }
 
     public patchValue(value: T[], options: { onlySelf?: boolean; emitEvent?: boolean } = {}): void {
@@ -191,12 +203,23 @@ export class GeneratedFormArray<T> extends FormArray implements GeneratedControl
         formControl.setAsyncControlValidators((this.model as ControlModel).asyncValidators);
         return formControl;
     }
+
+    private generateControlValueChanges(): void {
+        if (this.controlValueChangesSub) {
+            this.controlValueChangesSub.unsubscribe();
+        }
+
+        this.controlValueChanges$ = merge(
+            ...this.controls.map((control, i) => control.valueChanges.pipe(map(x => [x, i])))
+        ) as Observable<[T, number]>;
+        this.controlValueChangesSub = this.controlValueChanges$.subscribe(x => this.childValueChanges.next(x));
+    }
 }
 
 export class GeneratedFormControl<T> extends FormControl implements GeneratedControl {
     constructor(public readonly model: ControlModel, private asyncValidators: AsyncValidator[] = []) {
         super({ value: ValueUtils.useOrComputeValue(model.defaultValue), disabled: model.disabled }, {
-            validators: model.validators,
+            validators: [...model.validators ?? []],
             updateOn: model.updateOn
         });
     }

@@ -1,6 +1,6 @@
-import { Component } from "@angular/core";
-import { GeneratedFormGroup, NgxFormGeneratorProvider } from "../../projects/form-generator/src/public-api";
-import { TestForm } from "./form/test.form";
+import { Component, OnInit } from "@angular/core";
+import { GeneratedFormArray, GeneratedFormGroup, NgxFormGeneratorProvider } from "../../projects/form-generator/src/public-api";
+import { ArrayTestForm, TestForm } from "./form/test.form";
 
 @Component({
     selector: "app-root",
@@ -9,11 +9,15 @@ import { TestForm } from "./form/test.form";
         ...NgxFormGeneratorProvider.forFeature([TestForm])
     ]
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
     public values: TestForm;
     public valid: any;
 
     constructor(public formGroup: GeneratedFormGroup<TestForm>) {
+    }
+
+    public ngOnInit(): void {
+        (this.formGroup.get("array") as GeneratedFormArray<ArrayTestForm>).childValueChanges.subscribe(([x, i]) => console.log(x, i));
     }
 
     public setValues() {
@@ -24,7 +28,8 @@ export class AppComponent {
                 test: "Hello world!",
                 test2: null,
                 test3: null
-            }
+            },
+            array: []
         });
     }
 
@@ -37,5 +42,11 @@ export class AppComponent {
             test: this.formGroup.valid,
             group: this.formGroup.controls.group.valid
         };
+    }
+
+    public addControl(): void {
+        (this.formGroup.get("array") as GeneratedFormArray<ArrayTestForm>).push({
+            name: `test! ${(this.formGroup.get("array") as GeneratedFormArray<ArrayTestForm>).length + 1}`
+        });
     }
 }
