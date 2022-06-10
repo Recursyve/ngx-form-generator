@@ -131,7 +131,7 @@ export class GeneratedFormArray<T> extends FormArray implements GeneratedControl
 
     public push(value: unknown | T, options?: { emitEvent?: boolean; }): void {
         const control = this.getControl();
-        super.push(control, options);
+        super.push(control, { emitEvent: false });
         this.generateControlValueChanges();
         if (value) {
             control.patchValue(value, options);
@@ -140,7 +140,7 @@ export class GeneratedFormArray<T> extends FormArray implements GeneratedControl
 
     public insert(index: number, value: unknown | T, options?: { emitEvent?: boolean; }): void {
         const control = this.getControl();
-        super.insert(index, control, options);
+        super.insert(index, control, { emitEvent: false });
         this.generateControlValueChanges();
         if (value) {
             control.patchValue(value, options);

@@ -17,6 +17,7 @@ export class AppComponent implements OnInit {
     }
 
     public ngOnInit(): void {
+        (this.formGroup.get("array") as GeneratedFormArray<ArrayTestForm>).valueChanges.subscribe(() => console.log("Nice."));
         (this.formGroup.get("array") as GeneratedFormArray<ArrayTestForm>).childValueChanges.subscribe(([x, i]) => console.log(x, i));
     }
 
