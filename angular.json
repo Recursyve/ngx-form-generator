@@ -185,6 +185,5 @@
                 }
             }
         }
-    },
-    "defaultProject": "form-generator-app"
+    }
 }
