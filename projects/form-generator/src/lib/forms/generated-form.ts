@@ -302,7 +302,7 @@ export class GeneratedFormControl<T> extends FormControl implements GeneratedCon
             if (control instanceof GeneratedFormControl) {
                 const shouldRevalidate = control.checkDynamicValidators();
                 if (shouldRevalidate || control.model?.condition) {
-                    control.updateValueAndValidity({depth: depth + 1});
+                    control.updateValueAndValidity({depth: depth + 1, emitEvent: opts?.emitEvent, onlySelf: true});
                 }
             }
         }
