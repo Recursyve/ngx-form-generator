@@ -1,9 +1,20 @@
 import "reflect-metadata";
-import { CONTROL, CONTROLS } from "../constant";
+import { CONTROL, CONTROLS, UPDATE_ON } from "../constant";
 import { ControlConfigModel, ControlModel } from "../models/control.model";
 
 // @dynamic
 export class ControlHandler {
+    public static setupUpdateOn(updateOn: "change" | "blur" | "submit"): PropertyDecorator & ClassDecorator {
+        return (target: object, propertyKey?: string) => {
+            if (!propertyKey) {
+                Reflect.defineMetadata(UPDATE_ON, updateOn, target);
+                return;
+            }
+
+            this.setup({ updateOn })(target, propertyKey);
+        };
+    }
+
     public static setup(config: ControlConfigModel = {}): PropertyDecorator {
         return (target: object, propertyKey: string) => {
             let control: ControlModel = this.getControl(target, propertyKey);

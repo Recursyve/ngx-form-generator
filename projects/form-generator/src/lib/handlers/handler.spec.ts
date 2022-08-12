@@ -1,5 +1,5 @@
 import { CONTROLS } from "../constant";
-import { Array, Control, Group } from "../decorators/controls";
+import { Array, Control, Group, UpdateOn } from "../decorators/controls";
 import {
     Email,
     MatchesControl,
@@ -15,6 +15,7 @@ import { ControlModel } from "../models/control.model";
 import { GroupModel } from "../models/group.model";
 import { ControlHandler } from "./control.handler";
 
+@UpdateOn("blur")
 class TestA {
     @Control()
     control1: string;

@@ -41,16 +41,15 @@
     </div>
 
     <div>
-        <button (click)="getValues()">Show values</button>
-        <span> {{ values | json }} </span>
-    </div>
-
-    <div>
         <button (click)="getValid()">Show group valid</button>
         <span> {{ valid | json }} </span>
     </div>
 
     <div>
         <button (click)="addControl()">Add control</button>
+    </div>
+
+    <div>
+        {{ formGroup.valueChanges | async | json }}
     </div>
 </div>

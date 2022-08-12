@@ -1,5 +1,12 @@
 import { EventEmitter, Inject, Injectable, Optional } from "@angular/core";
-import { AbstractControl, FormArray, FormControl, FormGroup, ValidatorFn } from "@angular/forms";
+import {
+    AbstractControl,
+    AbstractControlOptions,
+    FormArray,
+    FormControl,
+    FormGroup,
+    ValidatorFn
+} from "@angular/forms";
 import { map, merge, Observable, of, Subscription } from "rxjs";
 import { ArrayModel } from "../models/array.model";
 import { ControlAsyncValidators, ControlModel } from "../models/control.model";
@@ -20,9 +27,12 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
     constructor(
         @Optional()
         @Inject(NGX_FORM_GENERATOR_ASYNC_VALIDATORS)
-        private asyncValidators: AsyncValidator[] = []
+        private asyncValidators: AsyncValidator[] = [],
+        @Optional()
+        @Inject("GeneratedFormGroupOptions")
+        options?: AbstractControlOptions
     ) {
-        super({});
+        super({}, options);
     }
 
     public setConfig(config: GroupModel) {
