@@ -37,6 +37,14 @@
     </div>
 
     <div>
+        <button (click)="getTouchedValue()">Get touched values</button>
+    </div>
+
+    <div>
+        {{ touchedValues | json }}
+    </div>
+
+    <div>
         <button (click)="setValues()">Set values</button>
     </div>
 

@@ -95,6 +95,24 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
         return validValue;
     }
 
+    public getTouchedValue(): T {
+        const validValue = new this.config.instance();
+
+        for (const key in this.controls) {
+            if (!this.controls.hasOwnProperty(key)) {
+                continue;
+            }
+
+            const control = this.controls[key];
+            const model = this._models.find(x => x.name === key);
+            if (control.touched) {
+                validValue[model.key] = control.getRawValue();
+            }
+        }
+
+        return validValue;
+    }
+
     public copy(): GeneratedFormGroup<T> {
         const group = new GeneratedFormGroup<T>();
         group.setConfig(this.config);
@@ -191,6 +209,10 @@ export class GeneratedFormArray<T> extends FormArray implements GeneratedControl
         return this.controls.map(x => x.getValidValue());
     }
 
+    public getTouchedValue(): T[] {
+        return this.controls.filter(x => x.touched).map(x => x.getRawValue());
+    }
+
     public markAllAsTouched() {
         super.markAllAsTouched();
         (this.statusChanges as EventEmitter<string>).emit(this.status);
@@ -259,6 +281,14 @@ export class GeneratedFormControl<T> extends FormControl implements GeneratedCon
 
     public getValidValue(): T {
         if (this.invalid) {
+            return undefined;
+        }
+
+        return this.getRawValue();
+    }
+
+    public getTouchedValue(): T {
+        if (!this.touched) {
             return undefined;
         }
 
