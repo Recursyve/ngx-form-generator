@@ -5,7 +5,8 @@ import { AsyncValidator } from "./validators/async.validator";
 
 export function ngxFormGeneratorFactory(provider: any) {
     return (asyncValidators: AsyncValidator[]) => {
-        const group = new GeneratedFormGroup(asyncValidators);
+        const updateOn = NgxFormGeneratorScanner.getUpdateOn(provider);
+        const group = new GeneratedFormGroup(asyncValidators, { updateOn: updateOn ?? "change" });
         group.setConfig({
             instance: provider,
             children: NgxFormGeneratorScanner.getControls(provider)

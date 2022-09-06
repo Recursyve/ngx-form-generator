@@ -1,6 +1,15 @@
 import { Validators } from "@angular/forms";
 import { Array } from "form-generator";
-import { AddValidatorIf, Control, Disabled, Group, MaxLength, RemoveValidatorIf, Required } from "../../../projects/form-generator/src/public-api";
+import {
+    AddValidatorIf,
+    Control,
+    Disabled,
+    Group,
+    MaxLength,
+    RemoveValidatorIf,
+    Required,
+    UpdateOn
+} from "../../../projects/form-generator/src/public-api";
 import { AsyncValidation } from "../validators/async.validator";
 
 export class GroupTestForm {
@@ -26,6 +35,7 @@ export class ArrayTestForm {
     name: string;
 }
 
+@UpdateOn("blur")
 export class TestForm {
     @Control()
     @AsyncValidation()

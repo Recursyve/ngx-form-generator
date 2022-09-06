@@ -11,6 +11,7 @@ import { ArrayTestForm, TestForm } from "./form/test.form";
 })
 export class AppComponent implements OnInit {
     public values: TestForm;
+    public touchedValues: Partial<TestForm>;
     public valid: any;
 
     constructor(public formGroup: GeneratedFormGroup<TestForm>) {
@@ -43,6 +44,10 @@ export class AppComponent implements OnInit {
             test: this.formGroup.valid,
             group: this.formGroup.controls.group.valid
         };
+    }
+
+    public getTouchedValue() {
+        this.touchedValues = this.formGroup.getTouchedValue();
     }
 
     public addControl(): void {

@@ -1,8 +1,5 @@
-import { ControlHandler,  } from "../../handlers/control.handler";
-import { ControlConfigModel } from "../../models/control.model";
+import { ControlHandler, } from "../../handlers/control.handler";
 
-export function UpdateOn(updateOn: "change" | "blur" | "submit"): PropertyDecorator {
-    return ControlHandler.setup({
-        updateOn
-    });
+export function UpdateOn(updateOn: "change" | "blur" | "submit"): PropertyDecorator & ClassDecorator {
+    return ControlHandler.setupUpdateOn(updateOn);
 }

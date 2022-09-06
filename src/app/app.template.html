@@ -37,12 +37,15 @@
     </div>
 
     <div>
-        <button (click)="setValues()">Set values</button>
+        <button (click)="getTouchedValue()">Get touched values</button>
     </div>
 
     <div>
-        <button (click)="getValues()">Show values</button>
-        <span> {{ values | json }} </span>
+        {{ touchedValues | json }}
+    </div>
+
+    <div>
+        <button (click)="setValues()">Set values</button>
     </div>
 
     <div>
@@ -52,5 +55,9 @@
 
     <div>
         <button (click)="addControl()">Add control</button>
+    </div>
+
+    <div>
+        {{ formGroup.valueChanges | async | json }}
     </div>
 </div>

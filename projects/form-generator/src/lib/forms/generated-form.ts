@@ -1,5 +1,12 @@
 import { EventEmitter, Inject, Injectable, Optional } from "@angular/core";
-import { AbstractControl, FormArray, FormControl, FormGroup, ValidatorFn } from "@angular/forms";
+import {
+    AbstractControl,
+    AbstractControlOptions,
+    FormArray,
+    FormControl,
+    FormGroup,
+    ValidatorFn
+} from "@angular/forms";
 import { map, merge, Observable, of, Subscription } from "rxjs";
 import { ArrayModel } from "../models/array.model";
 import { ControlAsyncValidators, ControlModel } from "../models/control.model";
@@ -20,9 +27,12 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
     constructor(
         @Optional()
         @Inject(NGX_FORM_GENERATOR_ASYNC_VALIDATORS)
-        private asyncValidators: AsyncValidator[] = []
+        private asyncValidators: AsyncValidator[] = [],
+        @Optional()
+        @Inject("GeneratedFormGroupOptions")
+        options?: AbstractControlOptions
     ) {
-        super({});
+        super({}, options);
     }
 
     public setConfig(config: GroupModel) {
@@ -80,6 +90,24 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
             const control = this.controls[key];
             const model = this._models.find(x => x.name === key);
             validValue[model.key] = control.getValidValue();
+        }
+
+        return validValue;
+    }
+
+    public getTouchedValue(): T {
+        const validValue = new this.config.instance();
+
+        for (const key in this.controls) {
+            if (!this.controls.hasOwnProperty(key)) {
+                continue;
+            }
+
+            const control = this.controls[key];
+            const model = this._models.find(x => x.name === key);
+            if (control.touched) {
+                validValue[model.key] = control.getRawValue();
+            }
         }
 
         return validValue;
@@ -181,6 +209,10 @@ export class GeneratedFormArray<T> extends FormArray implements GeneratedControl
         return this.controls.map(x => x.getValidValue());
     }
 
+    public getTouchedValue(): T[] {
+        return this.controls.filter(x => x.touched).map(x => x.getRawValue());
+    }
+
     public markAllAsTouched() {
         super.markAllAsTouched();
         (this.statusChanges as EventEmitter<string>).emit(this.status);
@@ -255,6 +287,14 @@ export class GeneratedFormControl<T> extends FormControl implements GeneratedCon
         return this.getRawValue();
     }
 
+    public getTouchedValue(): T {
+        if (!this.touched) {
+            return undefined;
+        }
+
+        return this.getRawValue();
+    }
+
     public setAsyncControlValidators(validators: ControlAsyncValidators[]): void {
         if (validators && validators.length) {
             this.setAsyncValidators(validators.map(x => this.customAsyncValidator.bind(this, x)));
@@ -302,7 +342,7 @@ export class GeneratedFormControl<T> extends FormControl implements GeneratedCon
             if (control instanceof GeneratedFormControl) {
                 const shouldRevalidate = control.checkDynamicValidators();
                 if (shouldRevalidate || control.model?.condition) {
-                    control.updateValueAndValidity({depth: depth + 1});
+                    control.updateValueAndValidity({depth: depth + 1, emitEvent: opts?.emitEvent, onlySelf: true});
                 }
             }
         }
