@@ -6,7 +6,8 @@ import { ClassProvider, FactoryProvider, ModuleWithProviders, NgModule, Provider
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { GeneratedFormGroup } from "./lib/forms";
 import { ngxFormGeneratorFactory } from "./lib/ngx-form-generator.factory";
-import { NGX_FORM_GENERATOR_ASYNC_VALIDATORS } from "./lib/validators/constant";
+import { NGX_FORM_GENERATOR_ASYNC_VALIDATORS } from "./lib/validators";
+import { NgxFormGroupsService } from "./lib/services/ngx-form-groups.service";
 
 export interface NgxFormGeneratorOptions {
     asyncValidators?: Provider[];
@@ -14,7 +15,8 @@ export interface NgxFormGeneratorOptions {
 
 // @dynamic
 @NgModule({
-    imports: [FormsModule, ReactiveFormsModule]
+    imports: [FormsModule, ReactiveFormsModule],
+    providers: [NgxFormGroupsService]
 })
 export class NgxFormGeneratorModule {
     public static forRoot(options: NgxFormGeneratorOptions = {}): ModuleWithProviders<NgxFormGeneratorModule> {
@@ -68,3 +70,4 @@ export * from "./lib/forms";
 export * from "./lib/validators";
 export * from "./lib/ngx-form-generator.factory";
 export * from "./lib/handlers/validators.handler";
+export * from "./lib/services/ngx-form-groups.service";

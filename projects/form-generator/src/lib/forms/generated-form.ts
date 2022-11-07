@@ -96,6 +96,24 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
         (this.statusChanges as EventEmitter<string>).emit(this.status);
     }
 
+    public addFormGroup(name: string, formGroup: GeneratedFormGroup<any>, options?: { emitEvent?: boolean }): void {
+        const modelIndex = this._models.findIndex((model) => model.name === name);
+        if (modelIndex >= 0) {
+            this._models.splice(modelIndex, 1);
+        }
+
+        this._models.push({
+            instance: formGroup.config.instance,
+            name,
+            key: name,
+            formElementType: "group",
+            type: formGroup.config.name ?? formGroup.config.instance.name,
+            disabled: formGroup.disabled,
+            children: formGroup.config.children
+        } as GroupModel);
+        super.addControl(name, formGroup, options);
+    }
+
     private generateControls() {
         for (const control of this._models) {
             let formControl: AbstractControl;
@@ -302,7 +320,7 @@ export class GeneratedFormControl<T> extends FormControl implements GeneratedCon
             if (control instanceof GeneratedFormControl) {
                 const shouldRevalidate = control.checkDynamicValidators();
                 if (shouldRevalidate || control.model?.condition) {
-                    control.updateValueAndValidity({depth: depth + 1});
+                    control.updateValueAndValidity({ depth: depth + 1 });
                 }
             }
         }
