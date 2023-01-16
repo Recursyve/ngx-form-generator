@@ -1,6 +1,6 @@
 import { AbstractControl } from "@angular/forms";
 
-export interface GeneratedControl extends AbstractControl {
+export interface GeneratedControl<T> extends AbstractControl<T> {
     getRawValue(): any;
     getValidValue(): any;
 }

@@ -1,5 +1,15 @@
 import { EventEmitter, Inject, Injectable, Optional } from "@angular/core";
-import { AbstractControl, FormArray, FormControl, FormGroup, ValidatorFn } from "@angular/forms";
+import {
+    AbstractControl,
+    FormArray,
+    FormControl,
+    FormGroup,
+    ValidatorFn,
+    ɵCoerceStrArrToNumArr,
+    ɵNavigate,
+    ɵTokenize,
+    ɵWriteable
+} from "@angular/forms";
 import { map, merge, Observable, of, Subscription } from "rxjs";
 import { ArrayModel } from "../models/array.model";
 import { ControlAsyncValidators, ControlModel } from "../models/control.model";
@@ -9,13 +19,16 @@ import { AsyncValidator } from "../validators/async.validator";
 import { NGX_FORM_GENERATOR_ASYNC_VALIDATORS } from "../validators/constant";
 import { GeneratedControl } from "./generated-control";
 
+// Surely nothing wrong will happen if we use internal angular types
+type GetProperty<T, P> = P extends string ? GetProperty<T, ɵCoerceStrArrToNumArr<ɵTokenize<P, ".">>> : ɵWriteable<P> extends Array<string | number> ? ɵNavigate<T, ɵWriteable<P>> : any;
+
 @Injectable()
-export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl {
+export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl<T> {
     // tslint:disable-next-line:variable-name
     private _models: (ControlModel | GroupModel | ArrayModel)[];
     private config: GroupModel;
 
-    public controls: { [key: string]: GeneratedControl };
+    public controls: { [key in keyof T]: GeneratedControl<T[key]> };
 
     constructor(
         @Optional()
@@ -34,6 +47,10 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
         if (this.config.disabled) {
             this.disable({ emitEvent: false });
         }
+    }
+
+    public override get<P extends (string | (readonly (string | number)[])), D extends GeneratedControl<GetProperty<T, P>>>(path: P): D {
+        return super.get(path) as D;
     }
 
     public patchValue(value: T, options: { onlySelf?: boolean; emitEvent?: boolean } = {}): void {
@@ -131,11 +148,11 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
     }
 }
 
-export class GeneratedFormArray<T> extends FormArray implements GeneratedControl {
+export class GeneratedFormArray<T> extends FormArray implements GeneratedControl<Array<T>> {
     private controlValueChanges$: Observable<[T, number]>;
     private controlValueChangesSub: Subscription;
 
-    public controls: GeneratedControl[];
+    public controls: GeneratedControl<T>[];
 
     public childValueChanges: EventEmitter<[T, number]> = new EventEmitter<[T, number]>();
 
@@ -165,8 +182,8 @@ export class GeneratedFormArray<T> extends FormArray implements GeneratedControl
         }
     }
 
-    public at(index: number): GeneratedControl {
-        return super.at(index) as GeneratedControl;
+    public at(index: number): GeneratedControl<T> {
+        return super.at(index) as GeneratedControl<T>;
     }
 
     public removeAt(index: number, options?: { emitEvent?: boolean }) {
@@ -234,7 +251,7 @@ export class GeneratedFormArray<T> extends FormArray implements GeneratedControl
     }
 }
 
-export class GeneratedFormControl<T> extends FormControl implements GeneratedControl {
+export class GeneratedFormControl<T extends any> extends FormControl<T> implements GeneratedControl<T> {
     constructor(public readonly model: ControlModel, private asyncValidators: AsyncValidator[] = []) {
         super({ value: ValueUtils.useOrComputeValue(model.defaultValue), disabled: model.disabled }, {
             validators: [...model.validators ?? []],
