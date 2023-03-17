@@ -8,27 +8,33 @@ import {
     ɵCoerceStrArrToNumArr,
     ɵNavigate,
     ɵTokenize,
-    ɵWriteable
+    ɵWriteable,
 } from "@angular/forms";
 import { map, merge, Observable, of, Subscription } from "rxjs";
 import { ArrayModel } from "../models/array.model";
 import { ControlAsyncValidators, ControlModel } from "../models/control.model";
 import { GroupModel } from "../models/group.model";
 import { ValueUtils } from "../utils/value.utils";
-import { AsyncValidator } from "../validators/async.validator";
-import { NGX_FORM_GENERATOR_ASYNC_VALIDATORS } from "../validators/constant";
+import { AsyncValidator } from "../validators";
+import { NGX_FORM_GENERATOR_ASYNC_VALIDATORS } from "../validators";
 import { GeneratedControl } from "./generated-control";
 
 // Surely nothing wrong will happen if we use internal angular types
-type GetProperty<T, P> = P extends string ? GetProperty<T, ɵCoerceStrArrToNumArr<ɵTokenize<P, ".">>> : ɵWriteable<P> extends Array<string | number> ? ɵNavigate<T, ɵWriteable<P>> : any;
+type GetProperty<T, P> = P extends string
+    ? GetProperty<T, ɵCoerceStrArrToNumArr<ɵTokenize<P, ".">>>
+    : ɵWriteable<P> extends Array<string | number>
+    ? ɵNavigate<T, ɵWriteable<P>>
+    : any;
 
 @Injectable()
-export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl<T> {
+export class GeneratedFormGroup<T>
+    extends FormGroup
+    implements GeneratedControl<T>
+{
+    public controls: { [key in keyof T]: GeneratedControl<T[key]> };
     // tslint:disable-next-line:variable-name
     private _models: (ControlModel | GroupModel | ArrayModel)[];
     private config: GroupModel;
-
-    public controls: { [key in keyof T]: GeneratedControl<T[key]> };
 
     constructor(
         @Optional()
@@ -49,11 +55,17 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
         }
     }
 
-    public override get<P extends (string | (readonly (string | number)[])), D extends GeneratedControl<GetProperty<T, P>>>(path: P): D {
+    public override get<
+        P extends string | readonly (string | number)[],
+        D extends GeneratedControl<GetProperty<T, P>>
+    >(path: P): D {
         return super.get(path) as D;
     }
 
-    public patchValue(value: T, options: { onlySelf?: boolean; emitEvent?: boolean } = {}): void {
+    public patchValue(
+        value: T,
+        options: { onlySelf?: boolean; emitEvent?: boolean } = {}
+    ): void {
         if (!value) {
             return;
         }
@@ -63,8 +75,11 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
                 continue;
             }
 
-            const model = this._models.find(x => x.name === key);
-            this.controls[key].patchValue(value[model.key], { onlySelf: true, emitEvent: options.emitEvent });
+            const model = this._models.find((x) => x.name === key);
+            this.controls[key].patchValue(value[model.key], {
+                onlySelf: true,
+                emitEvent: options.emitEvent,
+            });
         }
 
         this.updateValueAndValidity(options);
@@ -79,7 +94,7 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
             }
 
             const control = this.controls[key];
-            const model = this._models.find(x => x.name === key);
+            const model = this._models.find((x) => x.name === key);
             rawValue[model.key] = control.getRawValue();
         }
 
@@ -95,7 +110,7 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
             }
 
             const control = this.controls[key];
-            const model = this._models.find(x => x.name === key);
+            const model = this._models.find((x) => x.name === key);
             validValue[model.key] = control.getValidValue();
         }
 
@@ -113,8 +128,14 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
         (this.statusChanges as EventEmitter<string>).emit(this.status);
     }
 
-    public addFormGroup(name: string, formGroup: GeneratedFormGroup<any>, options?: { emitEvent?: boolean }): void {
-        const modelIndex = this._models.findIndex((model) => model.name === name);
+    public addFormGroup(
+        name: string,
+        formGroup: GeneratedFormGroup<any>,
+        options?: { emitEvent?: boolean }
+    ): void {
+        const modelIndex = this._models.findIndex(
+            (model) => model.name === name
+        );
         if (modelIndex >= 0) {
             this._models.splice(modelIndex, 1);
         }
@@ -126,7 +147,7 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
             formElementType: "group",
             type: formGroup.config.name ?? formGroup.config.instance.name,
             disabled: formGroup.disabled,
-            children: formGroup.config.children
+            children: formGroup.config.children,
         } as GroupModel);
         super.addControl(name, formGroup, options);
     }
@@ -135,36 +156,54 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
         for (const control of this._models) {
             let formControl: AbstractControl;
             if (control.formElementType === "array") {
-                formControl = new GeneratedFormArray(control as ArrayModel, this.asyncValidators);
+                formControl = new GeneratedFormArray(
+                    control as ArrayModel,
+                    this.asyncValidators
+                );
             } else if (control.formElementType === "group") {
                 formControl = new GeneratedFormGroup(this.asyncValidators);
-                (formControl as GeneratedFormGroup<T>).setConfig(control as GroupModel);
+                (formControl as GeneratedFormGroup<T>).setConfig(
+                    control as GroupModel
+                );
             } else {
-                formControl = new GeneratedFormControl(control, this.asyncValidators);
-                (formControl as GeneratedFormControl<any>).setAsyncControlValidators((control as ControlModel).asyncValidators);
+                formControl = new GeneratedFormControl(
+                    control,
+                    this.asyncValidators
+                );
+                (
+                    formControl as GeneratedFormControl<any>
+                ).setAsyncControlValidators(
+                    (control as ControlModel).asyncValidators
+                );
             }
             super.addControl(control.name, formControl);
         }
     }
 }
 
-export class GeneratedFormArray<T> extends FormArray implements GeneratedControl<Array<T>> {
+export class GeneratedFormArray<T>
+    extends FormArray
+    implements GeneratedControl<Array<T>>
+{
+    public controls: GeneratedControl<T>[];
+    public childValueChanges: EventEmitter<[T, number]> = new EventEmitter<
+        [T, number]
+    >();
     private controlValueChanges$: Observable<[T, number]>;
     private controlValueChangesSub: Subscription;
 
-    public controls: GeneratedControl<T>[];
-
-    public childValueChanges: EventEmitter<[T, number]> = new EventEmitter<[T, number]>();
-
-    constructor(public readonly model: ArrayModel, private asyncValidators: AsyncValidator[] = []) {
-        super(model.defaultValue ?? [], [...model.validators ?? []]);
+    constructor(
+        public readonly model: ArrayModel,
+        private asyncValidators: AsyncValidator[] = []
+    ) {
+        super(model.defaultValue ?? [], [...(model.validators ?? [])]);
 
         if (model.disabled) {
             this.disable({ emitEvent: false });
         }
     }
 
-    public push(value: unknown | T, options?: { emitEvent?: boolean; }): void {
+    public push(value: unknown | T, options?: { emitEvent?: boolean }): void {
         const control = this.getControl();
         super.push(control, { emitEvent: false });
         this.generateControlValueChanges();
@@ -173,7 +212,11 @@ export class GeneratedFormArray<T> extends FormArray implements GeneratedControl
         }
     }
 
-    public insert(index: number, value: unknown | T, options?: { emitEvent?: boolean; }): void {
+    public insert(
+        index: number,
+        value: unknown | T,
+        options?: { emitEvent?: boolean }
+    ): void {
         const control = this.getControl();
         super.insert(index, control, { emitEvent: false });
         this.generateControlValueChanges();
@@ -191,7 +234,10 @@ export class GeneratedFormArray<T> extends FormArray implements GeneratedControl
         this.generateControlValueChanges();
     }
 
-    public patchValue(value: T[], options: { onlySelf?: boolean; emitEvent?: boolean } = {}): void {
+    public patchValue(
+        value: T[],
+        options: { onlySelf?: boolean; emitEvent?: boolean } = {}
+    ): void {
         if (!value) {
             return;
         }
@@ -201,7 +247,10 @@ export class GeneratedFormArray<T> extends FormArray implements GeneratedControl
             if (i >= this.controls.length) {
                 this.push(null);
             }
-            this.at(i).patchValue(data, { onlySelf: true, emitEvent: options.emitEvent });
+            this.at(i).patchValue(data, {
+                onlySelf: true,
+                emitEvent: options.emitEvent,
+            });
             ++i;
         }
 
@@ -209,11 +258,11 @@ export class GeneratedFormArray<T> extends FormArray implements GeneratedControl
     }
 
     public getRawValue(): T[] {
-        return this.controls.map(x => x.getRawValue());
+        return this.controls.map((x) => x.getRawValue());
     }
 
     public getValidValue(): T[] {
-        return this.controls.map(x => x.getValidValue());
+        return this.controls.map((x) => x.getValidValue());
     }
 
     public markAllAsTouched() {
@@ -226,16 +275,21 @@ export class GeneratedFormArray<T> extends FormArray implements GeneratedControl
             const group = new GeneratedFormGroup(this.asyncValidators);
             group.setConfig({
                 ...this.model,
-                instance: this.model.arrayType
+                instance: this.model.arrayType,
             });
             return group;
         }
 
-        const formControl = new GeneratedFormControl({
-            ...this.model,
-            type: (this.model.arrayType as () => void).name
-        }, this.asyncValidators);
-        formControl.setAsyncControlValidators((this.model as ControlModel).asyncValidators);
+        const formControl = new GeneratedFormControl(
+            {
+                ...this.model,
+                type: (this.model.arrayType as () => void).name,
+            },
+            this.asyncValidators
+        );
+        formControl.setAsyncControlValidators(
+            (this.model as ControlModel).asyncValidators
+        );
         return formControl;
     }
 
@@ -245,18 +299,45 @@ export class GeneratedFormArray<T> extends FormArray implements GeneratedControl
         }
 
         this.controlValueChanges$ = merge(
-            ...this.controls.map((control, i) => control.valueChanges.pipe(map(x => [x, i])))
+            ...this.controls.map((control, i) =>
+                control.valueChanges.pipe(map((x) => [x, i]))
+            )
         ) as Observable<[T, number]>;
-        this.controlValueChangesSub = this.controlValueChanges$.subscribe(x => this.childValueChanges.next(x));
+        this.controlValueChangesSub = this.controlValueChanges$.subscribe((x) =>
+            this.childValueChanges.next(x)
+        );
     }
 }
 
-export class GeneratedFormControl<T extends any> extends FormControl<T> implements GeneratedControl<T> {
-    constructor(public readonly model: ControlModel, private asyncValidators: AsyncValidator[] = []) {
-        super({ value: ValueUtils.useOrComputeValue(model.defaultValue), disabled: model.disabled }, {
-            validators: [...model.validators ?? []],
-            updateOn: model.updateOn
-        });
+export class GeneratedFormControl<T extends any>
+    extends FormControl<T>
+    implements GeneratedControl<T>
+{
+    constructor(
+        public readonly model: ControlModel,
+        private asyncValidators: AsyncValidator[] = []
+    ) {
+        super(
+            {
+                value: ValueUtils.useOrComputeValue(model.defaultValue),
+                disabled: model.disabled,
+            },
+            {
+                validators: [...(model.validators ?? [])],
+                updateOn: model.updateOn,
+            }
+        );
+    }
+
+    public get validator(): ValidatorFn | null {
+        if (!(this.model?.condition?.(this) ?? true)) {
+            return null;
+        }
+        return super.validator;
+    }
+
+    public set validator(validatorFn: ValidatorFn | null) {
+        super.validator = validatorFn;
     }
 
     public getRawValue(): T {
@@ -266,13 +347,21 @@ export class GeneratedFormControl<T extends any> extends FormControl<T> implemen
                     return this.value;
                 }
 
-                if (this.model.validationOption && this.model.validationOption.ignoreZero && +this.value === 0) {
+                if (
+                    this.model.validationOption &&
+                    this.model.validationOption.ignoreZero &&
+                    +this.value === 0
+                ) {
                     return;
                 }
 
                 return +this.value as any;
             case "String":
-                if (this.model.validationOption && this.model.validationOption.ignoreEmpty && this.value === "") {
+                if (
+                    this.model.validationOption &&
+                    this.model.validationOption.ignoreEmpty &&
+                    this.value === ""
+                ) {
                     return;
                 }
 
@@ -290,9 +379,13 @@ export class GeneratedFormControl<T extends any> extends FormControl<T> implemen
         return this.getRawValue();
     }
 
-    public setAsyncControlValidators(validators: ControlAsyncValidators[]): void {
+    public setAsyncControlValidators(
+        validators: ControlAsyncValidators[]
+    ): void {
         if (validators && validators.length) {
-            this.setAsyncValidators(validators.map(x => this.customAsyncValidator.bind(this, x)));
+            this.setAsyncValidators(
+                validators.map((x) => this.customAsyncValidator.bind(this, x))
+            );
         }
     }
 
@@ -301,18 +394,11 @@ export class GeneratedFormControl<T extends any> extends FormControl<T> implemen
         (this.statusChanges as EventEmitter<string>).emit(this.status);
     }
 
-    public get validator(): ValidatorFn | null {
-        if (!(this.model?.condition?.(this) ?? true)) {
-            return null;
-        }
-        return super.validator;
-    }
-
-    public set validator(validatorFn: ValidatorFn | null) {
-        super.validator = validatorFn;
-    }
-
-    public updateValueAndValidity(opts?: { onlySelf?: boolean; emitEvent?: boolean, depth?: number }) {
+    public updateValueAndValidity(opts?: {
+        onlySelf?: boolean;
+        emitEvent?: boolean;
+        depth?: number;
+    }) {
         const depth = opts?.depth ?? 1;
         if (depth <= 1) {
             this.checkDynamicValidators();
@@ -324,11 +410,11 @@ export class GeneratedFormControl<T extends any> extends FormControl<T> implemen
             return;
         }
 
-        const controls: GeneratedFormControl<any>[] =
-            (this.parent instanceof GeneratedFormArray
+        const controls: GeneratedFormControl<any>[] = (
+            this.parent instanceof GeneratedFormArray
                 ? this.parent.controls
                 : Object.values(this.parent.controls)
-            ) as GeneratedFormControl<any>[];
+        ) as GeneratedFormControl<any>[];
         for (const control of controls) {
             if (control === this || depth > 1) {
                 continue;
@@ -343,12 +429,17 @@ export class GeneratedFormControl<T extends any> extends FormControl<T> implemen
         }
     }
 
-    private customAsyncValidator(controlValidator: ControlAsyncValidators, control: AbstractControl) {
+    private customAsyncValidator(
+        controlValidator: ControlAsyncValidators,
+        control: AbstractControl
+    ) {
         if (!this.asyncValidators) {
             return of(null);
         }
 
-        const validator = this.asyncValidators.find(x => controlValidator.name === x.name);
+        const validator = this.asyncValidators.find(
+            (x) => controlValidator.name === x.name
+        );
         if (!validator) {
             return of(null);
         }
@@ -366,16 +457,26 @@ export class GeneratedFormControl<T extends any> extends FormControl<T> implemen
 
         let shouldRevalidate = false;
         for (const validator of this.model.dynamicValidators) {
-            const success = validator.condition({ value: this.value, parent, control: this });
+            const success = validator.condition({
+                value: this.value,
+                parent,
+                control: this,
+            });
 
-            if ((success && validator.action === "add") || (!success && validator.action === "remove")) {
+            if (
+                (success && validator.action === "add") ||
+                (!success && validator.action === "remove")
+            ) {
                 for (const fn of validator.validators) {
                     if (!this.hasValidator(fn)) {
                         this.addValidators(fn);
                         shouldRevalidate = true;
                     }
                 }
-            } else if ((success && validator.action === "remove") || (!success && validator.action === "add")) {
+            } else if (
+                (success && validator.action === "remove") ||
+                (!success && validator.action === "add")
+            ) {
                 for (const fn of validator.validators) {
                     if (this.hasValidator(fn)) {
                         this.removeValidators(fn);
