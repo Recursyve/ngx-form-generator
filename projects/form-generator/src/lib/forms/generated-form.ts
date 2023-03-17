@@ -6,8 +6,10 @@ import {
     FormGroup,
     ValidatorFn,
     ɵCoerceStrArrToNumArr,
+    ɵFormGroupValue,
     ɵNavigate,
     ɵTokenize,
+    ɵTypedOrUntyped,
     ɵWriteable,
 } from "@angular/forms";
 import { map, merge, Observable, of, Subscription } from "rxjs";
@@ -15,8 +17,10 @@ import { ArrayModel } from "../models/array.model";
 import { ControlAsyncValidators, ControlModel } from "../models/control.model";
 import { GroupModel } from "../models/group.model";
 import { ValueUtils } from "../utils/value.utils";
-import { AsyncValidator } from "../validators";
-import { NGX_FORM_GENERATOR_ASYNC_VALIDATORS } from "../validators";
+import {
+    AsyncValidator,
+    NGX_FORM_GENERATOR_ASYNC_VALIDATORS,
+} from "../validators";
 import { GeneratedControl } from "./generated-control";
 
 // Surely nothing wrong will happen if we use internal angular types
@@ -26,10 +30,20 @@ type GetProperty<T, P> = P extends string
     ? ɵNavigate<T, ɵWriteable<P>>
     : any;
 
+type FormGroupValue<T> = {
+    [K in keyof T]: AbstractControl<T[K]>;
+};
+
+type FormGroupValueOrAny<T> = ɵTypedOrUntyped<
+    FormGroupValue<T>,
+    ɵFormGroupValue<FormGroupValue<T>>,
+    any
+>;
+
 @Injectable()
 export class GeneratedFormGroup<T>
-    extends FormGroup
-    implements GeneratedControl<T>
+    extends FormGroup<FormGroupValue<T>>
+    implements GeneratedControl<FormGroupValueOrAny<T>>
 {
     public controls: { [key in keyof T]: GeneratedControl<T[key]> };
     // tslint:disable-next-line:variable-name
@@ -41,7 +55,7 @@ export class GeneratedFormGroup<T>
         @Inject(NGX_FORM_GENERATOR_ASYNC_VALIDATORS)
         private asyncValidators: AsyncValidator[] = []
     ) {
-        super({});
+        super({} as any);
     }
 
     public setConfig(config: GroupModel) {
@@ -85,8 +99,9 @@ export class GeneratedFormGroup<T>
         this.updateValueAndValidity(options);
     }
 
-    public getRawValue(): T {
+    public getRawValue(): T & FormGroupValueOrAny<T> {
         const rawValue = new this.config.instance();
+        super.getRawValue();
 
         for (const key in this.controls) {
             if (!this.controls.hasOwnProperty(key)) {
@@ -128,8 +143,8 @@ export class GeneratedFormGroup<T>
         (this.statusChanges as EventEmitter<string>).emit(this.status);
     }
 
-    public addFormGroup(
-        name: string,
+    public addFormGroup<K extends string & keyof T>(
+        name: K,
         formGroup: GeneratedFormGroup<any>,
         options?: { emitEvent?: boolean }
     ): void {
@@ -149,7 +164,7 @@ export class GeneratedFormGroup<T>
             disabled: formGroup.disabled,
             children: formGroup.config.children,
         } as GroupModel);
-        super.addControl(name, formGroup, options);
+        super.addControl(name, formGroup as AbstractControl, options);
     }
 
     private generateControls() {
@@ -176,13 +191,13 @@ export class GeneratedFormGroup<T>
                     (control as ControlModel).asyncValidators
                 );
             }
-            super.addControl(control.name, formControl);
+            super.addControl(control.name as string & keyof T, formControl);
         }
     }
 }
 
 export class GeneratedFormArray<T>
-    extends FormArray
+    extends FormArray<AbstractControl<T>>
     implements GeneratedControl<Array<T>>
 {
     public controls: GeneratedControl<T>[];
@@ -309,7 +324,7 @@ export class GeneratedFormArray<T>
     }
 }
 
-export class GeneratedFormControl<T extends any>
+export class GeneratedFormControl<T>
     extends FormControl<T>
     implements GeneratedControl<T>
 {
@@ -360,7 +375,7 @@ export class GeneratedFormControl<T extends any>
                 if (
                     this.model.validationOption &&
                     this.model.validationOption.ignoreEmpty &&
-                    this.value === ""
+                    (typeof this.value === "string" && this.value === "")
                 ) {
                     return;
                 }

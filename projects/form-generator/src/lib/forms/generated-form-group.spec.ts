@@ -23,6 +23,7 @@ describe("GeneratedFormGroup", () => {
 
     beforeEach(() => {
         group = new GeneratedFormGroup<Test>();
+
         group.setConfig({
             instance: Test,
             children: [

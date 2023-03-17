@@ -146,10 +146,10 @@ describe("Handler Tests", () => {
     });
 
     describe("Group", () => {
-        it("TestB Metadata should contain four controls", () => {
+        it("TestB Metadata should contain three controls", () => {
             const controls: ControlModel[] = Reflect.getMetadata(CONTROLS, TestB.prototype);
             expect(controls).toBeDefined();
-            expect(controls.length).toBe(4);
+            expect(controls.length).toBe(3);
         });
 
         it("TestB group1 Metadata should be valid", () => {
@@ -171,11 +171,12 @@ describe("Handler Tests", () => {
             expect(control.type).toBe("TestA");
             expect(control.children).toBeDefined();
             expect(control.children.length).toBe(4);
-            expect(control.defaultValue).toEqual({
-                control1: "test",
-                control2: 20,
-                control3: null
-            });
+            expect(control.defaultValue).toBeDefined();
+            expect(control.defaultValue.control1).toEqual("test");
+            expect(control.defaultValue.control2).toEqual(20);
+            expect(control.defaultValue.control3).toBeNull();
+            expect(typeof control.defaultValue.control4).toBe("function");
+            expect(control.defaultValue.control4()).toEqual(20);
         });
 
         it("TestB control3 Metadata should be valid", () => {
@@ -196,20 +197,20 @@ describe("Handler Tests", () => {
             expect(control.type).toBe("TestA");
             expect(control.children).toBeDefined();
             expect(control.children.length).toBe(4);
-            expect(control.defaultValue).toEqual({
-                control1: "test",
-                control2: 20,
-                control3: null,
-                control4: () => 20
-            });
+            expect(control.defaultValue).toBeDefined();
+            expect(control.defaultValue.control1).toEqual("test");
+            expect(control.defaultValue.control2).toEqual(20);
+            expect(control.defaultValue.control3).toBeNull();
+            expect(typeof control.defaultValue.control4).toBe("function");
+            expect(control.defaultValue.control4()).toEqual(20);
         });
     });
 
     describe("Validators", () => {
-        it("TestC Metadata should contain ten controls", () => {
+        it("TestC Metadata should contain 11 controls", () => {
             const controls: ControlModel[] = Reflect.getMetadata(CONTROLS, TestC.prototype);
             expect(controls).toBeDefined();
-            expect(controls.length).toBe(10);
+            expect(controls.length).toBe(11);
         });
 
         it("TestC control1 Metadata should contains eight validators", () => {
