@@ -19,7 +19,6 @@ jobs:
       - name: Install packages
         run: npm ci
       - name: Run tests
-        working-directory: projects/form-generator
         run: npm run test:headless -- --no-watch --no-progress
       - name: Build lib
         run: npm run build:lib
