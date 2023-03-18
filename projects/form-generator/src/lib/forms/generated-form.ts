@@ -43,7 +43,7 @@ type FormGroupValueOrAny<T> = ɵTypedOrUntyped<
 @Injectable()
 export class GeneratedFormGroup<T>
     extends FormGroup<FormGroupValue<T>>
-    implements GeneratedControl<FormGroupValueOrAny<T>>
+    implements GeneratedControl<T | FormGroupValueOrAny<T>>
 {
     public controls: { [key in keyof T]: GeneratedControl<T[key]> };
     // tslint:disable-next-line:variable-name
@@ -375,7 +375,8 @@ export class GeneratedFormControl<T>
                 if (
                     this.model.validationOption &&
                     this.model.validationOption.ignoreEmpty &&
-                    (typeof this.value === "string" && this.value === "")
+                    typeof this.value === "string" &&
+                    this.value === ""
                 ) {
                     return;
                 }
