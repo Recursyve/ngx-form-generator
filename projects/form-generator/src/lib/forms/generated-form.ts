@@ -77,7 +77,7 @@ export class GeneratedFormGroup<T>
     }
 
     public patchValue(
-        value: T,
+        value: T & FormGroupValueOrAny<T>,
         options: { onlySelf?: boolean; emitEvent?: boolean } = {}
     ): void {
         if (!value) {
@@ -116,7 +116,7 @@ export class GeneratedFormGroup<T>
         return rawValue;
     }
 
-    public getValidValue(): T {
+    public getValidValue(): T & FormGroupValueOrAny<T> {
         const validValue = new this.config.instance();
 
         for (const key in this.controls) {
