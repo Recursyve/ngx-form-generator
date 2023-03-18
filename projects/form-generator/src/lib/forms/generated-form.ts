@@ -6,6 +6,7 @@ import {
     FormGroup,
     ValidatorFn,
     ɵCoerceStrArrToNumArr,
+    ɵFormGroupRawValue,
     ɵFormGroupValue,
     ɵNavigate,
     ɵTokenize,
@@ -30,20 +31,23 @@ type GetProperty<T, P> = P extends string
     ? ɵNavigate<T, ɵWriteable<P>>
     : any;
 
-type FormGroupValue<T> = {
+type FormGroupControls<T> = {
     [K in keyof T]: AbstractControl<T[K]>;
 };
 
 type FormGroupValueOrAny<T> = ɵTypedOrUntyped<
-    FormGroupValue<T>,
-    ɵFormGroupValue<FormGroupValue<T>>,
+    FormGroupControls<T>,
+    ɵFormGroupValue<FormGroupControls<T>>,
     any
 >;
 
 @Injectable()
 export class GeneratedFormGroup<T>
-    extends FormGroup<FormGroupValue<T>>
-    implements GeneratedControl<T | FormGroupValueOrAny<T>>
+    extends FormGroup<FormGroupControls<T>>
+    implements
+        GeneratedControl<
+            FormGroupValueOrAny<T> | ɵFormGroupRawValue<FormGroupControls<T>>
+        >
 {
     public controls: { [key in keyof T]: GeneratedControl<T[key]> };
     // tslint:disable-next-line:variable-name
