@@ -1,0 +1,24 @@
+name: Dev CI
+
+on: [pull_request]
+
+jobs:
+  form-generator:
+    name: Form generator dev
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install packages
+        run: npm ci
+      - name: Run tests
+        run: npm run test:headless -- --no-watch --no-progress
+      - name: Build lib
+        run: npm run build:lib

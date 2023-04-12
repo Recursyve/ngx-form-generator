@@ -146,7 +146,7 @@ describe("Handler Tests", () => {
     });
 
     describe("Group", () => {
-        it("TestB Metadata should contain four controls", () => {
+        it("TestB Metadata should contain three controls", () => {
             const controls: ControlModel[] = Reflect.getMetadata(CONTROLS, TestB.prototype);
             expect(controls).toBeDefined();
             expect(controls.length).toBe(3);
@@ -207,7 +207,7 @@ describe("Handler Tests", () => {
     });
 
     describe("Validators", () => {
-        it("TestC Metadata should contain ten controls", () => {
+        it("TestC Metadata should contain 11 controls", () => {
             const controls: ControlModel[] = Reflect.getMetadata(CONTROLS, TestC.prototype);
             expect(controls).toBeDefined();
             expect(controls.length).toBe(11);

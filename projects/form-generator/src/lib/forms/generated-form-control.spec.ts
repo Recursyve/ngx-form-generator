@@ -79,7 +79,7 @@ describe("GeneratedFormControl", () => {
         expect(defaultValueControl.getRawValue()).toEqual("default_value");
         expect(defaultFunctionalValueControl.getRawValue()).toEqual("default_value");
 
-        numberControl.patchValue(null);
-        expect(numberControl.getRawValue()).toEqual(null);
+        numberControl.patchValue(null as any);
+        expect(numberControl.getRawValue()).toEqual(null as any);
     });
 });
