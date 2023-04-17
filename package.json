@@ -16,6 +16,7 @@
         "build:lib": "ng build form-generator -c production",
         "publish-package": "npm run build:lib && npm publish ./dist/form-generator --access public",
         "publish-package:beta": "npm run build:lib && npm publish ./dist/form-generator --tag beta --access public",
+        "publish-package:next": "npm run build:lib && npm publish ./dist/form-generator --tag next --access public",
         "publish-package:dry-run": "npm run build:lib && npm publish ./dist/form-generator --dry-run"
     },
     "private": true,
