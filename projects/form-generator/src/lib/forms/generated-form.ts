@@ -139,6 +139,7 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
             let formControl: AbstractControl;
             if (control.formElementType === "array") {
                 formControl = new GeneratedFormArray(control as ArrayModel, this.asyncValidators);
+                (formControl as GeneratedFormArray<T>).setAsyncFormGroupArray(this.asyncValidators);
             } else if (control.formElementType === "group") {
                 formControl = new GeneratedFormGroup(this.asyncValidators);
                 (formControl as GeneratedFormGroup<T>).setConfig(control as GroupModel);
@@ -211,6 +212,12 @@ export class GeneratedFormArray<T> extends FormArray implements GeneratedControl
         this.updateValueAndValidity(options);
     }
 
+    public setAsyncFormGroupArray(validators: ControlAsyncValidators[]): void {
+        if (validators && validators.length) {
+            this.setAsyncValidators(validators.map(x => this.customAsyncValidator.bind(this, x)));
+        }
+    }
+
     public getRawValue(): T[] {
         return this.controls.map(x => x.getRawValue());
     }
@@ -251,6 +258,19 @@ export class GeneratedFormArray<T> extends FormArray implements GeneratedControl
             ...this.controls.map((control, i) => control.valueChanges.pipe(map(x => [x, i])))
         ) as Observable<[T, number]>;
         this.controlValueChangesSub = this.controlValueChanges$.subscribe(x => this.childValueChanges.next(x));
+    }
+
+    private customAsyncValidator(controlValidator: ControlAsyncValidators, control: AbstractControl) {
+        if (!this.asyncValidators) {
+            return of(null);
+        }
+
+        const validator = this.asyncValidators.find(x => controlValidator.name === x.name);
+        if (!validator) {
+            return of(null);
+        }
+
+        return validator.validate(control);
     }
 }
 
