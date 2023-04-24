@@ -29,6 +29,7 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
         this.config = config;
         this._models = config.children;
         this.setValidators(config.validators);
+        this.setAsyncFormGroupValidators(this.asyncValidators)
         this.generateControls();
 
         if (this.config.disabled) {
@@ -51,6 +52,12 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
         }
 
         this.updateValueAndValidity(options);
+    }
+
+    public setAsyncFormGroupValidators(validators: ControlAsyncValidators[]): void {
+        if (validators && validators.length) {
+            this.setAsyncValidators(validators.map(x => this.customAsyncValidator.bind(this, x)));
+        }
     }
 
     public getRawValue(): T {
@@ -112,6 +119,19 @@ export class GeneratedFormGroup<T> extends FormGroup implements GeneratedControl
             children: formGroup.config.children
         } as GroupModel);
         super.addControl(name, formGroup, options);
+    }
+
+    private customAsyncValidator(controlValidator: ControlAsyncValidators, control: AbstractControl) {
+        if (!this.asyncValidators) {
+            return of(null);
+        }
+
+        const validator = this.asyncValidators.find(x => controlValidator.name === x.name);
+        if (!validator) {
+            return of(null);
+        }
+
+        return validator.validate(control);
     }
 
     private generateControls() {
