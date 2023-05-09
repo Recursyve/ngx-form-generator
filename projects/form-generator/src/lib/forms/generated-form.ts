@@ -3,16 +3,16 @@ import {
     AbstractControl,
     FormArray,
     FormControl,
-    FormGroup,
+    FormGroup, ValidationErrors,
     ValidatorFn,
 } from "@angular/forms";
-import { config, map, merge, Observable, of, Subscription } from "rxjs";
+import { map, merge, Observable, of, Subscription } from "rxjs";
 import { ArrayModel } from "../models/array.model";
 import { ControlAsyncValidators, ControlModel } from "../models/control.model";
 import { GroupModel } from "../models/group.model";
 import { ValueUtils } from "../utils/value.utils";
-import { AsyncValidator } from "../validators/async.validator";
-import { NGX_FORM_GENERATOR_ASYNC_VALIDATORS } from "../validators/constant";
+import { AsyncValidator } from "../validators";
+import { NGX_FORM_GENERATOR_ASYNC_VALIDATORS } from "../validators";
 import { GeneratedControl } from "./generated-control";
 
 @Injectable()
@@ -34,7 +34,7 @@ export class GeneratedFormGroup<T>
         super({});
     }
 
-    public setConfig(config: GroupModel) {
+    public setConfig(config: GroupModel): void {
         this.config = config;
         this._models = config.children;
         this.setValidators(config.validators);
@@ -149,7 +149,7 @@ export class GeneratedFormGroup<T>
     private customAsyncValidator(
         controlValidator: ControlAsyncValidators,
         control: AbstractControl
-    ) {
+    ): Promise<ValidationErrors> | Observable<ValidationErrors> {
         if (!this.asyncValidators) {
             return of(null);
         }
@@ -164,7 +164,7 @@ export class GeneratedFormGroup<T>
         return validator.validate(control);
     }
 
-    private generateControls() {
+    private generateControls(): void {
         for (const control of this._models) {
             let formControl: AbstractControl;
             if (control.formElementType === "array") {
@@ -246,7 +246,7 @@ export class GeneratedFormArray<T>
         return super.at(index) as GeneratedControl;
     }
 
-    public removeAt(index: number, options?: { emitEvent?: boolean }) {
+    public removeAt(index: number, options?: { emitEvent?: boolean }): void {
         super.removeAt(index, options);
         this.generateControlValueChanges();
     }
@@ -290,7 +290,7 @@ export class GeneratedFormArray<T>
         return this.controls.map((x) => x.getValidValue());
     }
 
-    public markAllAsTouched() {
+    public markAllAsTouched(): void {
         super.markAllAsTouched();
         (this.statusChanges as EventEmitter<string>).emit(this.status);
     }
@@ -336,7 +336,7 @@ export class GeneratedFormArray<T>
     private customAsyncValidator(
         controlValidator: ControlAsyncValidators,
         control: AbstractControl
-    ) {
+    ): Promise<ValidationErrors> | Observable<ValidationErrors> {
         if (!this.asyncValidators) {
             return of(null);
         }
@@ -421,7 +421,7 @@ export class GeneratedFormControl<T>
         }
     }
 
-    public markAllAsTouched() {
+    public markAllAsTouched(): void {
         super.markAllAsTouched();
         (this.statusChanges as EventEmitter<string>).emit(this.status);
     }
@@ -441,7 +441,7 @@ export class GeneratedFormControl<T>
         onlySelf?: boolean;
         emitEvent?: boolean;
         depth?: number;
-    }) {
+    }): void {
         const depth = opts?.depth ?? 1;
         if (depth <= 1) {
             this.checkDynamicValidators();
@@ -475,7 +475,7 @@ export class GeneratedFormControl<T>
     private customAsyncValidator(
         controlValidator: ControlAsyncValidators,
         control: AbstractControl
-    ) {
+    ): Promise<ValidationErrors> | Observable<ValidationErrors> {
         if (!this.asyncValidators) {
             return of(null);
         }
