@@ -122,6 +122,21 @@ export class GeneratedFormGroup<T>
         (this.statusChanges as EventEmitter<string>).emit(this.status);
     }
 
+    // TODO: Support form group and form array
+    public addControl(name: string, control: AbstractControl, options?: { emitEvent?: boolean }) {
+        const modelIndex = this._models.findIndex((model) => model.name === name);
+        if (modelIndex >= 0) {
+            this._models.splice(modelIndex, 1);
+        }
+
+        const newModel = this.generateModelFromControl(name, control);
+        if (newModel) {
+            this._models.push(newModel);
+        }
+
+        super.addControl(name, control, options);
+    }
+
     public addFormGroup(
         name: string,
         formGroup: GeneratedFormGroup<any>,
@@ -193,6 +208,25 @@ export class GeneratedFormGroup<T>
             }
             super.addControl(control.name, formControl);
         }
+    }
+
+    private generateModelFromControl(name: string, control: AbstractControl): ControlModel | null {
+        if (control instanceof FormControl) {
+            return {
+                name,
+                key: name,
+                formElementType: "control",
+                type: null,
+                condition: null,
+                updateOn: control.updateOn,
+                disabled: control.disabled,
+                validators: [],
+                asyncValidators: [],
+                dynamicValidators: []
+            } as ControlModel;
+        }
+
+        return null;
     }
 }
 
