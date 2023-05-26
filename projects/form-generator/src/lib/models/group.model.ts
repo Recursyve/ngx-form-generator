@@ -15,6 +15,7 @@ export interface GroupModel {
     validationOption?: ValidationOptionModel;
     defaultValue?: any;
     disabled?: boolean;
+    dynamic?: boolean;
 }
 
 export interface GroupConfigModel {

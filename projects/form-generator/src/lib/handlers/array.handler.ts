@@ -22,7 +22,7 @@ export class ArrayHandler {
                 disabled: array?.disabled,
                 defaultValue: array?.defaultValue,
                 arrayType: type,
-                children: children ? children.map(x => Reflect.getMetadata(CONTROL.replace("{name}", x), type.prototype)) : null
+                children: children?.map(x => Reflect.getMetadata(CONTROL.replace("{name}", x), type.prototype)) ?? []
             };
             Reflect.defineMetadata(CONTROL.replace("{name}", propertyKey), array, target);
         };
