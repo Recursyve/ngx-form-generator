@@ -54,13 +54,23 @@ export class GeneratedFormGroup<T>
             return;
         }
 
-        for (const key in this.controls) {
-            if (!this.controls.hasOwnProperty(key)) {
+        for (const key in value) {
+            if (!value.hasOwnProperty(key)) {
                 continue;
             }
 
             const model = this._models.find((x) => x.name === key);
-            this.controls[key].patchValue(value[model.key], {
+            if (!model && !this.controls[key] && this.config.dynamic) {
+                if (typeof value[key] === "object" || Array.isArray(value[key])) {
+                    continue;
+                }
+
+                this.addControl(key, new FormControl(""));
+            } else if (!model) {
+                continue;
+            }
+
+            this.controls[key].patchValue(value[key], {
                 onlySelf: true,
                 emitEvent: options.emitEvent,
             });
@@ -135,6 +145,15 @@ export class GeneratedFormGroup<T>
         }
 
         super.addControl(name, control, options);
+    }
+
+    public removeControl(name: string, options?: { emitEvent?: boolean }): void {
+        const modelIndex = this._models.findIndex((model) => model.name === name);
+        if (modelIndex >= 0) {
+            this._models.splice(modelIndex, 1);
+        }
+
+        super.removeControl(name, options);
     }
 
     public addFormGroup(
