@@ -13,9 +13,9 @@
         "lint": "ng lint",
         "e2e": "ng e2e",
         "build:lib": "ng build form-generator -c production",
-        "publish-package": "npm run build:lib && npm publish dist/form-generator --access public",
-        "publish-package:beta": "npm run build:lib && npm publish dist/form-generator --tag beta --access public",
-        "publish-package:dry-run": "npm run build:lib && npm publish dist/form-generator --dry-run"
+        "publish-package": "npm run build:lib && npm publish ./dist/form-generator --access public",
+        "publish-package:beta": "npm run build:lib && npm publish ./dist/form-generator --tag beta --access public",
+        "publish-package:dry-run": "npm run build:lib && npm publish ./dist/form-generator --dry-run"
     },
     "private": true,
     "dependencies": {
