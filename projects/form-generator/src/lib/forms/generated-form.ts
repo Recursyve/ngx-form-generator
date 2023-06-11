@@ -29,9 +29,11 @@ export class GeneratedFormGroup<T>
     constructor(
         @Optional()
         @Inject(NGX_FORM_GENERATOR_ASYNC_VALIDATORS)
-        private asyncValidators: AsyncValidator[] = []
+        private readonly asyncValidators: AsyncValidator[] = []
     ) {
         super({});
+
+        this.asyncValidators = this.asyncValidators.filter((validator) => !!validator);
     }
 
     public setConfig(config: GroupModel): void {

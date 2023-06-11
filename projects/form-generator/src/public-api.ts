@@ -37,7 +37,8 @@ export class NgxFormGeneratorModule {
             }) ?? [
                 {
                     provide: NGX_FORM_GENERATOR_ASYNC_VALIDATORS,
-                    useValue: []
+                    useValue: null,
+                    multi: true
                 }
             ]
         };
