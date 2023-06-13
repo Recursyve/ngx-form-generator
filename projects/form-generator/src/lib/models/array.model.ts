@@ -9,7 +9,7 @@ export interface ArrayModel {
     type: string;
     formElementType: string;
     arrayType?: object;
-    children: (ControlModel | GroupModel | ArrayModel)[];
+    children?: (ControlModel | GroupModel | ArrayModel)[];
     validators?: ValidatorFn[];
     asyncValidators?: ControlAsyncValidators[];
     validationOption?: ValidationOptionModel;
