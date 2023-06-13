@@ -355,6 +355,7 @@ export class GeneratedFormArray<T>
             const group = new GeneratedFormGroup(this.asyncValidators);
             group.setConfig({
                 ...this.model,
+                children: this.model.children,
                 instance: this.model.arrayType,
             });
             return group;
