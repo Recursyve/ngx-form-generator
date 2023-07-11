@@ -17,22 +17,22 @@ import { ControlHandler } from "./control.handler";
 
 class TestA {
     @Control()
-    control1: string;
+    control1!: string;
 
     @Control({ defaultValue: 10 })
-    control2: number;
+    control2!: number;
 
     @Control({ name: "date" })
-    control3: Date;
+    control3!: Date;
 
     @Control({ defaultValue: () => 10 })
-    control4: number;
+    control4!: number;
 }
 
 class TestB {
     @Group()
     @Required()
-    group1: TestA;
+    group1!: TestA;
 
     @Group({
         defaultValue: {
@@ -42,10 +42,10 @@ class TestB {
             control4: () => 20
         }
     })
-    group2: TestA;
+    group2!: TestA;
 
     @Group({ name: "testGroup" })
-    group3: TestA;
+    group3!: TestA;
 }
 
 class TestC {
@@ -58,47 +58,47 @@ class TestC {
     @MaxLength(10)
     @MatchesControl("group1")
     @MatchesPattern("test")
-    control1: string;
+    control1!: string;
 
     @Control()
     @Email()
-    email: string;
+    email!: string;
 
     @Control()
     @MatchesControl("email")
-    matchesControl: string;
+    matchesControl!: string;
 
     @Control()
     @MatchesPattern("test")
-    matchesPattern: string;
+    matchesPattern!: string;
 
     @Control()
     @Max(10)
-    max: number;
+    max!: number;
 
     @Control()
     @MaxLength(10)
-    maxLength: string;
+    maxLength!: string;
 
     @Control()
     @Min(10)
-    min: number;
+    min!: number;
 
     @Control()
     @MinLength(10)
-    minLength: string;
+    minLength!: string;
 
     @Control()
     @Required()
-    required: string;
+    required!: string;
 
     @Control()
     @ValueIs(true)
-    valueIs: boolean;
+    valueIs!: boolean;
 
     @Array(Number)
     @Required()
-    reqArr: boolean[];
+    reqArr!: boolean[];
 }
 
 describe("Handler Tests", () => {
@@ -110,7 +110,7 @@ describe("Handler Tests", () => {
         });
 
         it("TestA control1 Metadata should be valid", () => {
-            const control = ControlHandler.getControl(TestA.prototype, "control1");
+            const control = ControlHandler.getOrCreateControl(TestA.prototype, "control1");
             expect(control).toBeDefined();
             expect(control.name).toBe("control1");
             expect(control.key).toBe("control1");
@@ -118,7 +118,7 @@ describe("Handler Tests", () => {
         });
 
         it("TestA control2 Metadata should be valid", () => {
-            const control = ControlHandler.getControl(TestA.prototype, "control2");
+            const control = ControlHandler.getOrCreateControl(TestA.prototype, "control2");
             expect(control).toBeDefined();
             expect(control.name).toBe("control2");
             expect(control.key).toBe("control2");
@@ -127,7 +127,7 @@ describe("Handler Tests", () => {
         });
 
         it("TestA control3 Metadata should be valid", () => {
-            const control = ControlHandler.getControl(TestA.prototype, "control3");
+            const control = ControlHandler.getOrCreateControl(TestA.prototype, "control3");
             expect(control).toBeDefined();
             expect(control.name).toBe("date");
             expect(control.key).toBe("control3");
@@ -135,7 +135,7 @@ describe("Handler Tests", () => {
         });
 
         it ("TestA control4 Metadata should be valid", () => {
-            const control = ControlHandler.getControl(TestA.prototype, "control4");
+            const control = ControlHandler.getOrCreateControl(TestA.prototype, "control4");
             expect(control).toBeDefined();
             expect(control.name).toBe("control4");
             expect(control.key).toBe("control4");
@@ -153,18 +153,18 @@ describe("Handler Tests", () => {
         });
 
         it("TestB group1 Metadata should be valid", () => {
-            const control = ControlHandler.getControl(TestB.prototype, "group1") as GroupModel;
+            const control = ControlHandler.getOrCreateControl(TestB.prototype, "group1") as GroupModel;
             expect(control).toBeDefined();
             expect(control.name).toBe("group1");
             expect(control.key).toBe("group1");
             expect(control.type).toBe("TestA");
-            expect(control.validators.length).toBe(1);
+            expect(control.validators?.length).toBe(1);
             expect(control.children).toBeDefined();
             expect(control.children.length).toBe(4);
         });
 
         it("TestB control2 Metadata should be valid", () => {
-            const control = ControlHandler.getControl(TestB.prototype, "group2") as GroupModel;
+            const control = ControlHandler.getOrCreateControl(TestB.prototype, "group2") as GroupModel;
             expect(control).toBeDefined();
             expect(control.name).toBe("group2");
             expect(control.key).toBe("group2");
@@ -179,7 +179,7 @@ describe("Handler Tests", () => {
         });
 
         it("TestB control3 Metadata should be valid", () => {
-            const control = ControlHandler.getControl(TestB.prototype, "group3") as GroupModel;
+            const control = ControlHandler.getOrCreateControl(TestB.prototype, "group3") as GroupModel;
             expect(control).toBeDefined();
             expect(control.name).toBe("testGroup");
             expect(control.key).toBe("group3");
@@ -189,7 +189,7 @@ describe("Handler Tests", () => {
         });
 
         it("TestB control4 Metadata should be valid", () => {
-            const control = ControlHandler.getControl(TestB.prototype, "group2") as GroupModel;
+            const control = ControlHandler.getOrCreateControl(TestB.prototype, "group2") as GroupModel;
             expect(control).toBeDefined();
             expect(control.name).toBe("group2");
             expect(control.key).toBe("group2");
@@ -213,17 +213,17 @@ describe("Handler Tests", () => {
         });
 
         it("TestC control1 Metadata should contains eight validators", () => {
-            const control = ControlHandler.getControl(TestC.prototype, "control1");
+            const control = ControlHandler.getOrCreateControl(TestC.prototype, "control1");
             expect(control).toBeDefined();
             expect(control.validators).toBeDefined();
-            expect(control.validators.length).toBe(8);
+            expect(control.validators?.length).toBe(8);
         });
 
         it("TestC reqArr Metadata should contains one validators", () => {
-            const control = ControlHandler.getControl(TestC.prototype, "reqArr");
+            const control = ControlHandler.getOrCreateControl(TestC.prototype, "reqArr");
             expect(control).toBeDefined();
             expect(control.validators).toBeDefined();
-            expect(control.validators.length).toBe(1);
+            expect(control.validators?.length).toBe(1);
         });
     });
 });

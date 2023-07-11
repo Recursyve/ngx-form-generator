@@ -3,28 +3,30 @@ import {
     AbstractControl,
     FormArray,
     FormControl,
-    FormGroup, ValidationErrors,
+    FormGroup,
+    UntypedFormControl,
+    ValidationErrors,
     ValidatorFn,
 } from "@angular/forms";
 import { map, merge, Observable, of, Subscription } from "rxjs";
+import { NotInitException } from "../exceptions/not-init.exception";
 import { ArrayModel } from "../models/array.model";
 import { ControlAsyncValidators, ControlModel } from "../models/control.model";
 import { GroupModel } from "../models/group.model";
 import { ValueUtils } from "../utils/value.utils";
-import { AsyncValidator } from "../validators";
-import { NGX_FORM_GENERATOR_ASYNC_VALIDATORS } from "../validators";
+import { AsyncValidator, NGX_FORM_GENERATOR_ASYNC_VALIDATORS } from "../validators";
 import { GeneratedControl } from "./generated-control";
 
 @Injectable()
-export class GeneratedFormGroup<T>
+export class GeneratedFormGroup<T extends { [key: string]: any }>
     extends FormGroup
     implements GeneratedControl
 {
     // tslint:disable-next-line:variable-name
-    private _models: (ControlModel | GroupModel | ArrayModel)[];
-    private config: GroupModel;
+    private _models: (ControlModel | GroupModel | ArrayModel)[] = [];
+    private config?: GroupModel;
 
-    public controls: { [key: string]: GeneratedControl };
+    public controls: { [key: string]: GeneratedControl } = {};
 
     constructor(
         @Optional()
@@ -39,8 +41,8 @@ export class GeneratedFormGroup<T>
     public setConfig(config: GroupModel): void {
         this.config = config;
         this._models = config.children;
-        this.setValidators(config.validators);
-        this.setAsyncFormGroupValidators(config.asyncValidators);
+        this.setValidators(config.validators ?? null);
+        this.setAsyncFormGroupValidators(config.asyncValidators ?? null);
         this.generateControls();
 
         if (this.config.disabled) {
@@ -52,6 +54,10 @@ export class GeneratedFormGroup<T>
         value: T,
         options: { onlySelf?: boolean; emitEvent?: boolean } = {}
     ): void {
+        if (!this.config) {
+            throw new NotInitException();
+        }
+
         if (!value) {
             return;
         }
@@ -82,7 +88,7 @@ export class GeneratedFormGroup<T>
     }
 
     public setAsyncFormGroupValidators(
-        validators: ControlAsyncValidators[]
+        validators: ControlAsyncValidators[] | null
     ): void {
         if (validators && validators.length) {
             this.setAsyncValidators(
@@ -92,6 +98,10 @@ export class GeneratedFormGroup<T>
     }
 
     public getRawValue(): T {
+        if (!this.config) {
+            throw new NotInitException();
+        }
+
         const rawValue = new this.config.instance();
 
         for (const key in this.controls) {
@@ -101,6 +111,10 @@ export class GeneratedFormGroup<T>
 
             const control = this.controls[key];
             const model = this._models.find((x) => x.name === key);
+            if (!model) {
+                continue;
+            }
+
             rawValue[model.key] = control.getRawValue();
         }
 
@@ -108,6 +122,10 @@ export class GeneratedFormGroup<T>
     }
 
     public getValidValue(): T {
+        if (!this.config) {
+            throw new NotInitException();
+        }
+
         const validValue = new this.config.instance();
 
         for (const key in this.controls) {
@@ -117,6 +135,10 @@ export class GeneratedFormGroup<T>
 
             const control = this.controls[key];
             const model = this._models.find((x) => x.name === key);
+            if (!model) {
+                continue;
+            }
+
             validValue[model.key] = control.getValidValue();
         }
 
@@ -124,6 +146,10 @@ export class GeneratedFormGroup<T>
     }
 
     public copy(): GeneratedFormGroup<T> {
+        if (!this.config) {
+            throw new NotInitException();
+        }
+
         const group = new GeneratedFormGroup<T>();
         group.setConfig(this.config);
         return group;
@@ -163,6 +189,10 @@ export class GeneratedFormGroup<T>
         formGroup: GeneratedFormGroup<any>,
         options?: { emitEvent?: boolean }
     ): void {
+        if (!formGroup.config) {
+            throw new NotInitException();
+        }
+
         const modelIndex = this._models.findIndex(
             (model) => model.name === name
         );
@@ -185,7 +215,7 @@ export class GeneratedFormGroup<T>
     private customAsyncValidator(
         controlValidator: ControlAsyncValidators,
         control: AbstractControl
-    ): Promise<ValidationErrors> | Observable<ValidationErrors> {
+    ): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> {
         if (!this.asyncValidators) {
             return of(null);
         }
@@ -209,7 +239,7 @@ export class GeneratedFormGroup<T>
                     this.asyncValidators
                 );
                 (formControl as GeneratedFormArray<T>).setAsyncFormGroupArray(
-                    (control as ArrayModel).asyncValidators
+                    (control as ArrayModel).asyncValidators ?? null
                 );
             } else if (control.formElementType === "group") {
                 formControl = new GeneratedFormGroup(this.asyncValidators);
@@ -218,13 +248,13 @@ export class GeneratedFormGroup<T>
                 );
             } else {
                 formControl = new GeneratedFormControl(
-                    control,
+                    control as ControlModel,
                     this.asyncValidators
                 );
                 (
                     formControl as GeneratedFormControl<any>
                 ).setAsyncControlValidators(
-                    (control as ControlModel).asyncValidators
+                    (control as ControlModel).asyncValidators ?? null
                 );
             }
             super.addControl(control.name, formControl);
@@ -232,7 +262,7 @@ export class GeneratedFormGroup<T>
     }
 
     private generateModelFromControl(name: string, control: AbstractControl): ControlModel | null {
-        if (control instanceof FormControl) {
+        if (control instanceof FormControl || control instanceof UntypedFormControl) {
             return {
                 name,
                 key: name,
@@ -255,10 +285,10 @@ export class GeneratedFormArray<T>
     extends FormArray
     implements GeneratedControl
 {
-    private controlValueChanges$: Observable<[T, number]>;
-    private controlValueChangesSub: Subscription;
+    private controlValueChanges$?: Observable<[T, number]>;
+    private controlValueChangesSub?: Subscription;
 
-    public controls: GeneratedControl[];
+    public controls: GeneratedControl[] = [];
 
     public childValueChanges: EventEmitter<[T, number]> = new EventEmitter<
         [T, number]
@@ -329,7 +359,7 @@ export class GeneratedFormArray<T>
         this.updateValueAndValidity(options);
     }
 
-    public setAsyncFormGroupArray(validators: ControlAsyncValidators[]): void {
+    public setAsyncFormGroupArray(validators: ControlAsyncValidators[] | null): void {
         if (validators && validators.length) {
             this.setAsyncValidators(
                 validators.map((x) => this.customAsyncValidator.bind(this, x))
@@ -369,7 +399,7 @@ export class GeneratedFormArray<T>
             this.asyncValidators
         );
         formControl.setAsyncControlValidators(
-            (this.model as ControlModel).asyncValidators
+            (this.model as ControlModel).asyncValidators ?? null
         );
         return formControl;
     }
@@ -392,7 +422,7 @@ export class GeneratedFormArray<T>
     private customAsyncValidator(
         controlValidator: ControlAsyncValidators,
         control: AbstractControl
-    ): Promise<ValidationErrors> | Observable<ValidationErrors> {
+    ): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> {
         if (!this.asyncValidators) {
             return of(null);
         }
@@ -428,7 +458,7 @@ export class GeneratedFormControl<T>
         );
     }
 
-    public getRawValue(): T {
+    public getRawValue(): T | null {
         switch (this.model.type) {
             case "Number":
                 if (this.value === null || this.value === undefined) {
@@ -440,7 +470,7 @@ export class GeneratedFormControl<T>
                     this.model.validationOption.ignoreZero &&
                     +this.value === 0
                 ) {
-                    return;
+                    return null;
                 }
 
                 return +this.value as any;
@@ -450,7 +480,7 @@ export class GeneratedFormControl<T>
                     this.model.validationOption.ignoreEmpty &&
                     this.value === ""
                 ) {
-                    return;
+                    return null;
                 }
 
                 return this.value;
@@ -459,16 +489,16 @@ export class GeneratedFormControl<T>
         }
     }
 
-    public getValidValue(): T {
+    public getValidValue(): T | null {
         if (this.invalid) {
-            return undefined;
+            return null;
         }
 
         return this.getRawValue();
     }
 
     public setAsyncControlValidators(
-        validators: ControlAsyncValidators[]
+        validators: ControlAsyncValidators[] | null
     ): void {
         if (validators && validators.length) {
             this.setAsyncValidators(
@@ -531,7 +561,7 @@ export class GeneratedFormControl<T>
     private customAsyncValidator(
         controlValidator: ControlAsyncValidators,
         control: AbstractControl
-    ): Promise<ValidationErrors> | Observable<ValidationErrors> {
+    ): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> {
         if (!this.asyncValidators) {
             return of(null);
         }
@@ -548,7 +578,7 @@ export class GeneratedFormControl<T>
 
     private checkDynamicValidators(): boolean {
         if (!this.model?.dynamicValidators?.length) {
-            return;
+            return false;
         }
 
         // Use the internal function of implemented by FormGroup.

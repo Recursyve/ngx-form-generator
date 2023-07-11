@@ -8,7 +8,7 @@ import { GroupModel } from "../models/group.model";
 export class NgxFormGroupsService {
     constructor(@Optional() @Inject(NGX_FORM_GENERATOR_ASYNC_VALIDATORS) private asyncValidators: AsyncValidator[] = []) {}
 
-    public generate<T>(formGroupType: Type<T>): GeneratedFormGroup<T> {
+    public generate<T extends { [key: string]: any }>(formGroupType: Type<T>): GeneratedFormGroup<T> {
         const formGroup = new GeneratedFormGroup<T>(this.asyncValidators);
         formGroup.setConfig({
             instance: formGroupType,

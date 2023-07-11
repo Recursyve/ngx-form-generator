@@ -5,28 +5,26 @@ import { ControlConfigModel, ControlModel } from "../models/control.model";
 // @dynamic
 export class ControlHandler {
     public static setup(config: ControlConfigModel = {}): PropertyDecorator {
-        return (target: object, propertyKey: string) => {
-            let control: ControlModel = this.getControl(target, propertyKey);
+        return (target: object, propertyKey: string | symbol) => {
+            const control: Partial<ControlModel> = this.getOrCreateControl(target, propertyKey as string);
             const controlType = Reflect.getMetadata("design:type", target, propertyKey);
-            control = {
+            const updatedControl = {
                 ...control,
-                name: config.name || propertyKey,
-                key: propertyKey,
+                name: config.name || propertyKey as string,
+                key: propertyKey as string,
                 type: controlType.name,
                 defaultValue: config.defaultValue,
                 updateOn: config.updateOn ?? control.updateOn,
                 disabled: config.disabled ?? control.disabled
-            };
-            this.saveControl(control, target, propertyKey);
+            } as ControlModel;
+            this.saveControl(updatedControl, target, propertyKey as string);
         };
     }
 
-    public static getControl(target: object, propertyKey: string): ControlModel {
-        let control: ControlModel = Reflect.getMetadata(CONTROL.replace("{name}", propertyKey), target);
+    public static getOrCreateControl(target: object, propertyKey: string): Partial<ControlModel> {
+        let control: Partial<ControlModel> = Reflect.getMetadata(CONTROL.replace("{name}", propertyKey), target);
         if (!control) {
             control = {
-                name: null,
-                key: null,
                 formElementType: "control",
                 type: null,
                 condition: null,
@@ -42,7 +40,7 @@ export class ControlHandler {
         return control;
     }
 
-    public static saveControl(control: ControlModel, target: object, propertyKey: string) {
+    public static saveControl(control: Partial<ControlModel>, target: object, propertyKey: string) {
         Reflect.defineMetadata(CONTROL.replace("{name}", propertyKey), control, target);
     }
 }

@@ -5,17 +5,17 @@ import { GeneratedFormArray, GeneratedFormGroup } from "./generated-form";
 import { Validators } from "@angular/forms";
 
 class TestGroup {
-    public text: string;
-    public number: number;
-    public date: Date;
+    public text!: string;
+    public number!: number;
+    public date!: Date;
 }
 
 class Test {
-    public text: string;
-    public number: number;
-    public date: Date;
-    public group: TestGroup;
-    public array: TestGroup[];
+    public text!: string;
+    public number!: number;
+    public date!: Date;
+    public group!: TestGroup;
+    public array!: TestGroup[];
 }
 
 describe("GeneratedFormGroup", () => {

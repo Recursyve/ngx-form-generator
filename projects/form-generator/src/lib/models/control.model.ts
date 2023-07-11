@@ -8,10 +8,10 @@ export interface ControlAsyncValidators {
 export interface ControlModel {
     name: string;
     key: string;
-    type: string;
+    type: string | null;
     formElementType: string;
     defaultValue?: any;
-    condition?: ValidatorConditionFn;
+    condition?: ValidatorConditionFn | null;
     validators?: ValidatorFn[];
     asyncValidators?: ControlAsyncValidators[];
     dynamicValidators?: DynamicValidators[];

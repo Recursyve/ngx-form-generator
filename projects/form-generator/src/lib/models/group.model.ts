@@ -10,8 +10,8 @@ export interface GroupModel {
     type: string;
     formElementType: string;
     children: (ControlModel | GroupModel | ArrayModel)[];
-    validators?: ValidatorFn[];
-    asyncValidators?: ControlAsyncValidators[];
+    validators?: ValidatorFn[] | null;
+    asyncValidators?: ControlAsyncValidators[] | null;
     validationOption?: ValidationOptionModel;
     defaultValue?: any;
     disabled?: boolean;

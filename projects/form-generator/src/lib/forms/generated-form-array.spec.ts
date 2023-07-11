@@ -2,9 +2,9 @@ import { Validators } from "@angular/forms";
 import { GeneratedFormArray } from "./generated-form";
 
 class Test {
-    public text: string;
-    public number: number;
-    public date: Date;
+    public text!: string;
+    public number!: number;
+    public date!: Date;
 }
 
 describe("GeneratedFormArray", () => {
