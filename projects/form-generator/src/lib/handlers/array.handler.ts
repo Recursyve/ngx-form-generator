@@ -1,11 +1,15 @@
 import "reflect-metadata";
+
+import { Type } from "@angular/core";
 import { CONTROL, CONTROLS } from "../constant";
 import { ArrayModel } from "../models/array.model";
 
 // @dynamic
 export class ArrayHandler {
-    public static setup(type: () => void): PropertyDecorator {
+    public static setup(typeCallback: () => Type<any>): PropertyDecorator {
         return (target: object, propertyKey: string | symbol) => {
+            const type = typeCallback();
+
             let array: ArrayModel = Reflect.getMetadata(CONTROL.replace("{name}", propertyKey as string), target);
             const children = Reflect.getMetadata(CONTROLS, type.prototype) as string[];
             if (!array) {
@@ -21,8 +25,8 @@ export class ArrayHandler {
                 validators: array?.validators ?? [],
                 disabled: array?.disabled,
                 defaultValue: array?.defaultValue,
-                arrayType: type,
-                children: children?.map(x => Reflect.getMetadata(CONTROL.replace("{name}", x), type.prototype))
+                arrayType: typeCallback,
+                children: children ?? null
             };
             Reflect.defineMetadata(CONTROL.replace("{name}", propertyKey as string), array, target);
         };

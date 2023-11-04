@@ -10,7 +10,7 @@ import { ArrayTestForm, TestForm } from "./form/test.form";
     ]
 })
 export class AppComponent implements OnInit {
-    public values: TestForm;
+    public values!: TestForm;
     public valid: any;
 
     constructor(public formGroup: GeneratedFormGroup<TestForm>) {
@@ -27,10 +27,21 @@ export class AppComponent implements OnInit {
             disabledControl: "This should be disabled",
             group: {
                 test: "Hello world!",
-                test2: null,
-                test3: null
+                test2: "",
+                test3: ""
             },
-            array: []
+            array: [],
+            children: [
+                {
+                    control1: "test!",
+                    children: [
+                        {
+                            control1: "test!",
+                            children: []
+                        }
+                    ]
+                }
+            ]
         });
     }
 

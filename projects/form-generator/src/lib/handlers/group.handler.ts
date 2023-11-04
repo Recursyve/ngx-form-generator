@@ -1,5 +1,8 @@
 import "reflect-metadata";
+import { Type } from "@angular/core";
 import { CONTROL, CONTROLS } from "../constant";
+import { ArrayModel } from "../models/array.model";
+import { ControlModel } from "../models/control.model";
 import { GroupConfigModel, GroupModel } from "../models/group.model";
 
 // @dynamic
@@ -39,5 +42,10 @@ export class GroupHandler {
             defaultValue: config.defaultValue,
             children: children?.map(x => Reflect.getMetadata(CONTROL.replace("{name}", x), controlType.prototype)) ?? []
         };
+    }
+
+    public static getChildren(target: Type<any>): (ControlModel | GroupModel | ArrayModel)[] {
+        const children = Reflect.getMetadata(CONTROLS, target.prototype) as string[];
+        return children?.map(x => Reflect.getMetadata(CONTROL.replace("{name}", x), target.prototype)) ?? [];
     }
 }

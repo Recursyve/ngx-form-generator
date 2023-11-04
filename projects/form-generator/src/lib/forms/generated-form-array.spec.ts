@@ -1,9 +1,15 @@
 import { Validators } from "@angular/forms";
+import { Control } from "../decorators";
 import { GeneratedFormArray } from "./generated-form";
 
 class Test {
+    @Control()
     public text!: string;
+
+    @Control()
     public number!: number;
+
+    @Control()
     public date!: Date;
 }
 
@@ -20,37 +26,15 @@ describe("GeneratedFormArray", () => {
             type: "Array",
             key: "array",
             name: "array",
-            arrayType: Test,
-            children: [
-                {
-                    formElementType: "control",
-                    type: "String",
-                    key: "text",
-                    name: "text",
-                    validators: [Validators.required]
-                },
-                {
-                    formElementType: "control",
-                    type: "Number",
-                    key: "number",
-                    name: "number",
-                    validators: [Validators.required]
-                },
-                {
-                    formElementType: "control",
-                    type: "Date",
-                    key: "date",
-                    name: "date",
-                    validators: [Validators.required]
-                }
-            ]
+            arrayType: () => Test,
+            children: ["text", "number", "date"]
         });
         textArray = new GeneratedFormArray<string>({
             formElementType: "array",
             type: "Array",
             key: "text",
             name: "text",
-            arrayType: String,
+            arrayType: () => String,
             children: null
         });
         numberArray = new GeneratedFormArray<number>({
@@ -58,7 +42,7 @@ describe("GeneratedFormArray", () => {
             type: "Array",
             key: "number",
             name: "number",
-            arrayType: Number,
+            arrayType: () => Number,
             children: null
         });
         dateArray = new GeneratedFormArray<Date>({
@@ -66,7 +50,7 @@ describe("GeneratedFormArray", () => {
             type: "Array",
             key: "date",
             name: "date",
-            arrayType: Date,
+            arrayType: () => Date,
             children: null
         });
         reqArray = new GeneratedFormArray<number>({
@@ -74,7 +58,7 @@ describe("GeneratedFormArray", () => {
             type: "Array",
             key: "req",
             name: "req",
-            arrayType: Number,
+            arrayType: () => Number,
             children: null,
             validators: [Validators.required]
         });

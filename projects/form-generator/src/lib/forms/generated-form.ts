@@ -10,6 +10,7 @@ import {
 } from "@angular/forms";
 import { map, merge, Observable, of, Subscription } from "rxjs";
 import { NotInitException } from "../exceptions/not-init.exception";
+import { GroupHandler } from "../handlers/group.handler";
 import { ArrayModel } from "../models/array.model";
 import { ControlAsyncValidators, ControlModel } from "../models/control.model";
 import { GroupModel } from "../models/group.model";
@@ -381,12 +382,18 @@ export class GeneratedFormArray<T>
     }
 
     private getControl(): AbstractControl {
+        if (!this.model.arrayType) {
+            throw new Error("No array type defined");
+        }
+
         if (this.model.children) {
             const group = new GeneratedFormGroup(this.asyncValidators);
+            const type = this.model.arrayType();
+            const children = GroupHandler.getChildren(type);
             group.setConfig({
                 ...this.model,
-                children: this.model.children,
-                instance: this.model.arrayType,
+                children,
+                instance: type
             });
             return group;
         }
@@ -394,7 +401,7 @@ export class GeneratedFormArray<T>
         const formControl = new GeneratedFormControl(
             {
                 ...this.model,
-                type: (this.model.arrayType as () => void).name,
+                type: this.model.arrayType().name
             },
             this.asyncValidators
         );

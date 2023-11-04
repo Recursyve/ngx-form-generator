@@ -1,6 +1,6 @@
+import { Type } from "@angular/core";
 import { ValidatorFn } from "@angular/forms";
-import { ControlAsyncValidators, ControlModel } from "./control.model";
-import { GroupModel } from "./group.model";
+import { ControlAsyncValidators } from "./control.model";
 import { ValidationOptionModel } from "./validation-option.model";
 
 export interface ArrayModel {
@@ -8,8 +8,8 @@ export interface ArrayModel {
     key: string;
     type: string;
     formElementType: string;
-    arrayType?: object;
-    children?: (ControlModel | GroupModel | ArrayModel)[] | null;
+    arrayType?: () => Type<any>;
+    children?: string[] | null;
     validators?: ValidatorFn[];
     asyncValidators?: ControlAsyncValidators[];
     validationOption?: ValidationOptionModel;

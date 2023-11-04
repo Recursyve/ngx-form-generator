@@ -1,3 +1,4 @@
+import { Array, Control, Group } from "../decorators";
 import { ArrayModel } from "../models/array.model";
 import { ControlModel } from "../models/control.model";
 import { GroupModel } from "../models/group.model";
@@ -5,16 +6,30 @@ import { GeneratedFormArray, GeneratedFormGroup } from "./generated-form";
 import { Validators } from "@angular/forms";
 
 class TestGroup {
+    @Control()
     public text!: string;
+
+    @Control()
     public number!: number;
+
+    @Control()
     public date!: Date;
 }
 
 class Test {
+    @Control()
     public text!: string;
+
+    @Control()
     public number!: number;
+
+    @Control()
     public date!: Date;
+
+    @Group()
     public group!: TestGroup;
+
+    @Array(() => TestGroup)
     public array!: TestGroup[];
 }
 
@@ -82,30 +97,8 @@ describe("GeneratedFormGroup", () => {
                     type: "Array",
                     key: "array",
                     name: "array",
-                    arrayType: TestGroup,
-                    children: [
-                        {
-                            formElementType: "control",
-                            type: "String",
-                            key: "text",
-                            name: "text",
-                            validators: [Validators.required]
-                        } as ControlModel,
-                        {
-                            formElementType: "control",
-                            type: "Number",
-                            key: "number",
-                            name: "number",
-                            validators: [Validators.required]
-                        } as ControlModel,
-                        {
-                            formElementType: "control",
-                            type: "Date",
-                            key: "date",
-                            name: "date",
-                            validators: [Validators.required]
-                        } as ControlModel
-                    ]
+                    arrayType: () => TestGroup,
+                    children: ["text", "number", "date"]
                 } as ArrayModel
             ]
         } as GroupModel);

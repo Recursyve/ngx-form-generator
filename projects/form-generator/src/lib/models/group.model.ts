@@ -1,10 +1,11 @@
+import { Type } from "@angular/core";
 import { ValidatorFn } from "@angular/forms";
 import { ArrayModel } from "./array.model";
 import { ControlAsyncValidators, ControlModel } from "./control.model";
 import { ValidationOptionModel } from "./validation-option.model";
 
 export interface GroupModel {
-    instance: any;
+    instance: Type<any>;
     name: string;
     key: string;
     type: string;
