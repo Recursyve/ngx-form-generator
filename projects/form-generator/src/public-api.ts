@@ -71,4 +71,6 @@ export * from "./lib/forms";
 export * from "./lib/validators";
 export * from "./lib/ngx-form-generator.factory";
 export * from "./lib/handlers/validators.handler";
+export * from "./lib/rxjs/control-value-changes.listener";
+export * from "./lib/rxjs/start-with-current-control-value.operator";
 export * from "./lib/services/ngx-form-groups.service";
