@@ -8,13 +8,19 @@ export function arrayMinLength(min: number, checkNull = true): ValidatorFn {
             }
 
             return {
-                arrayMinLength: true
+                arrayMinLength: {
+                    min,
+                    actual: control.value.length
+                }
             };
         }
 
         if (!control.value && checkNull) {
             return {
-                arrayMinLength: true
+                arrayMinLength: {
+                    min,
+                    actual: control.value.length
+                }
             };
         }
 
