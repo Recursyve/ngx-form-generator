@@ -18,8 +18,7 @@ export function arrayMinLength(min: number, checkNull = true): ValidatorFn {
         if (!control.value && checkNull) {
             return {
                 arrayMinLength: {
-                    min,
-                    actual: control.value.length
+                    min
                 }
             };
         }

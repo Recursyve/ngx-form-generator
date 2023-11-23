@@ -18,8 +18,7 @@ export function arrayMaxLength(max: number, checkNull = true): ValidatorFn {
         if (!control.value && checkNull) {
             return {
                 arrayMaxLength: {
-                    max,
-                    actual: null
+                    max
                 }
             };
         }
