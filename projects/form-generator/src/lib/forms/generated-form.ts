@@ -65,7 +65,7 @@ export class GeneratedFormGroup<T>
                     continue;
                 }
 
-                this.addControl(key, new FormControl(""));
+                this.addControl(key, new FormControl(), options);
             } else if (!model) {
                 continue;
             }
