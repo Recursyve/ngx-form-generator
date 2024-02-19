@@ -74,7 +74,7 @@ export class GeneratedFormGroup<T extends { [key: string]: any }>
                     continue;
                 }
 
-                this.addControl(key, new FormControl(""));
+                this.addControl(key, new FormControl(), options);
             } else if (!model) {
                 continue;
             }
