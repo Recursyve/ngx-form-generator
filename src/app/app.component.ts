@@ -1,20 +1,27 @@
-import { Component, OnInit } from "@angular/core";
-import { GeneratedFormArray, GeneratedFormGroup, NgxFormGeneratorProvider } from "../../projects/form-generator/src/public-api";
+import { JsonPipe } from "@angular/common";
+import { Component, inject, OnInit } from "@angular/core";
+import { ReactiveFormsModule } from "@angular/forms";
+import {
+    GeneratedFormArray,
+    GeneratedFormGroup,
+    provideNgxGeneratedFormGroup
+} from "../../projects/form-generator/src/public-api";
 import { ArrayTestForm, TestForm } from "./form/test.form";
 
 @Component({
     selector: "app-root",
     templateUrl: "./app.template.html",
-    providers: [
-        ...NgxFormGeneratorProvider.forFeature([TestForm])
-    ]
+    imports: [
+        ReactiveFormsModule,
+        JsonPipe
+    ],
+    providers: [provideNgxGeneratedFormGroup(TestForm)]
 })
 export class AppComponent implements OnInit {
     public values!: TestForm;
     public valid: any;
 
-    constructor(public formGroup: GeneratedFormGroup<TestForm>) {
-    }
+    public readonly formGroup = inject<GeneratedFormGroup<TestForm>>(GeneratedFormGroup);
 
     public ngOnInit(): void {
         (this.formGroup.get("array") as GeneratedFormArray<ArrayTestForm>).valueChanges.subscribe(() => console.log("Nice."));
