@@ -83,7 +83,6 @@
                 "test": {
                     "builder": "@angular/build:karma",
                     "options": {
-                        "main": "src/test.ts",
                         "polyfills": ["src/polyfills.ts"],
                         "tsConfig": "src/tsconfig.spec.json",
                         "styles": ["src/styles.sass"],
@@ -120,9 +119,7 @@
                 "test": {
                     "builder": "@angular/build:karma",
                     "options": {
-                        "main": "projects/form-generator/src/test.ts",
-                        "tsConfig": "projects/form-generator/tsconfig.spec.json",
-                        "karmaConfig": "projects/form-generator/karma.conf.js"
+                        "tsConfig": "projects/form-generator/tsconfig.spec.json"
                     }
                 },
                 "lint": {
