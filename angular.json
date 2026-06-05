@@ -25,7 +25,7 @@
                             "base": "dist/form-generator-app"
                         },
                         "index": "src/index.html",
-                        "polyfills": ["src/polyfills.ts"],
+                        "polyfills": ["zone.js"],
                         "tsConfig": "src/tsconfig.app.json",
                         "assets": ["src/favicon.ico", "src/assets"],
                         "styles": ["src/styles.sass"],
@@ -60,6 +60,12 @@
                                     "maximumWarning": "6kb"
                                 }
                             ]
+                        },
+                        "testing": {
+                            "aot": false,
+                            "optimization": false,
+                            "extractLicenses": false,
+                            "polyfills": ["zone.js", "zone.js/testing"]
                         }
                     }
                 },
@@ -81,13 +87,11 @@
                     }
                 },
                 "test": {
-                    "builder": "@angular/build:karma",
+                    "builder": "@angular/build:unit-test",
                     "options": {
-                        "polyfills": ["src/polyfills.ts"],
                         "tsConfig": "src/tsconfig.spec.json",
-                        "styles": ["src/styles.sass"],
-                        "scripts": [],
-                        "assets": ["src/favicon.ico", "src/assets"]
+                        "buildTarget": ":build:testing",
+                        "runner": "vitest"
                     }
                 },
                 "lint": {
@@ -113,11 +117,15 @@
                     "configurations": {
                         "production": {
                             "tsConfig": "projects/form-generator/tsconfig.lib.prod.json"
+                        },
+                        "development": {
+                            "tsConfig": "projects/form-generator/tsconfig.lib.json"
                         }
-                    }
+                    },
+                    "defaultConfiguration": "production"
                 },
                 "test": {
-                    "builder": "@angular/build:karma",
+                    "builder": "@angular/build:unit-test",
                     "options": {
                         "tsConfig": "projects/form-generator/tsconfig.spec.json"
                     }

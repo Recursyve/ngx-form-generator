@@ -1,7 +1,6 @@
 {
     "compileOnSave": false,
     "compilerOptions": {
-      "baseUrl": "./",
       "outDir": "./dist/out-tsc",
       "strict": true,
       "skipLibCheck": true,
@@ -14,15 +13,12 @@
       "experimentalDecorators": true,
       "importHelpers": true,
       "target": "ES2022",
-      "typeRoots": [
-        "node_modules/@types"
-      ],
       "paths": {
         "form-generator": [
-          "dist/form-generator"
+          "./dist/form-generator"
         ],
         "form-generator/*": [
-          "dist/form-generator/*"
+          "./dist/form-generator/*"
         ]
       },
       "useDefineForClassFields": false
