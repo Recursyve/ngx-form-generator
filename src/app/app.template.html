@@ -1,38 +1,38 @@
 <div [formGroup]="formGroup">
     <label>
         Test:
-        <input formControlName="test">
+        <input formControlName="test" />
         {{ formGroup.controls.test.dirty }}
         {{ formGroup.errors | json }}
     </label>
 
     <label>
         Disabled:
-        <input formControlName="disabledControl">
+        <input formControlName="disabledControl" />
     </label>
 
     <h5>Group</h5>
     <div formGroupName="group">
         <label>
             Test in group:
-            <input formControlName="test">
-            {{ formGroup.get("group.test")?.errors | json }}
+            <input formControlName="test" />
+            {{ $safeNavigationMigration(formGroup.get("group.test")?.errors) | json }}
         </label>
 
-        <br>
+        <br />
 
         <label>
             Test2 in group:
-            <input formControlName="test2">
-            {{ formGroup.get("group.test2")?.errors | json }}
+            <input formControlName="test2" />
+            {{ $safeNavigationMigration(formGroup.get("group.test2")?.errors) | json }}
         </label>
 
-        <br>
+        <br />
 
         <label>
             Test3 in group:
-            <input formControlName="test3">
-            {{ formGroup.get("group.test3")?.errors | json }}
+            <input formControlName="test3" />
+            {{ $safeNavigationMigration(formGroup.get("group.test3")?.errors) | json }}
         </label>
     </div>
 

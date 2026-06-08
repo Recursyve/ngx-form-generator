@@ -1,5 +1,5 @@
 import { JsonPipe } from "@angular/common";
-import { Component, inject, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject, OnInit } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import {
     GeneratedFormArray,
@@ -15,6 +15,7 @@ import { ArrayTestForm, TestForm } from "./form/test.form";
         ReactiveFormsModule,
         JsonPipe
     ],
+    changeDetection: ChangeDetectionStrategy.Eager,
     providers: [provideNgxGeneratedFormGroup(TestForm)]
 })
 export class AppComponent implements OnInit {
